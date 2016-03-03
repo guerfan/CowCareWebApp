@@ -7,7 +7,7 @@ from functools import wraps
 app = Flask(__name__)
 
 # config
-app.secret_key = 'my precious'
+app.secret_key = '\xb9\xd8j\xf76\xeb|\x1d\x85\x94^z\xcc\xcc\x90\x98)\xd8\xecf;\x81\x9a\x1b'
 
 
 # login required decorator
@@ -17,7 +17,7 @@ def login_required(f):
         if 'logged_in' in session:
             return f(*args, **kwargs)
         else:
-            flash('You need to login first.')
+            
             return redirect(url_for('login'))
     return wrap
 
@@ -27,7 +27,7 @@ def login_required(f):
 @login_required
 def home():
     return render_template('index.html')  # render a template
-    # return "Hello, World!"  # return a string
+   
 
 
 @app.route('/welcome')
