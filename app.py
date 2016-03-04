@@ -78,6 +78,11 @@ def logout():
     flash('You were logged out.')
     return redirect(url_for('welcome'))
 
+@app.route('/treatmentplan')
+def treatmentplan():
+    r = open('plan.json').read()
+    raw = json.loads(r)
+    return render_template('treatmentplan.html',data=raw)
 
 # start the server with the 'run()' method
 if __name__ == '__main__':

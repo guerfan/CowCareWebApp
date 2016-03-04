@@ -2,8 +2,8 @@ import requests
 import json
 # Create User
 
-base_url = 'https://katys-care-api.herokuapp.com/v1'
-"""
+base_url = 'http://0.0.0.0:10200/v1'
+
 u = {
   "data":{
     "type": "users",
@@ -17,7 +17,7 @@ r = requests.post("{url}/users".format(url=base_url), json=u)
 
 print r.status_code
 print r.text
-"""
+
 
 # Get user token
 

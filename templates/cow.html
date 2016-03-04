@@ -1,0 +1,9 @@
+{% extends "login_base.html"%}
+{% block title %}Cow - Index{% endblock %}
+{% block inner_content %}
+<h1>Cows</h1>
+<ul>
+{%for cow in cows%}
+	<li>{{cow.id}}</li>
+{%endfor%}
+{% endblock %}

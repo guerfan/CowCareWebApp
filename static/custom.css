@@ -1,0 +1,26 @@
+.center{
+	margin:auto;
+	text-align: center;
+	background-color: yellow
+	top: 50%;
+	left: 50%;
+}
+ul.login{
+	list-style-type: none;
+}
+ul.navigation{
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	background-color: black;
+	overflow: hidden;
+}
+
+li.navbar{
+	float:left;
+	display: inline-block;
+	color: red;
+	text-align:center;
+	padding: 14px 16px;
+	text-decoration: none;
+}
