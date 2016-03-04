@@ -1,13 +1,17 @@
 # import the Flask class from the flask module
 from flask import Flask, render_template, redirect, \
-    url_for, request, session, flash
+    url_for, request, session, flash, make_response
 from functools import wraps
+import json
+import requests
 
 # create the application object
 app = Flask(__name__)
 
 # config
-app.secret_key = '\xb9\xd8j\xf76\xeb|\x1d\x85\x94^z\xcc\xcc\x90\x98)\xd8\xecf;\x81\x9a\x1b'
+app.secret_key = 'my precious'
+base_url = 'http://localhost:10200/v1'
+#base_url = 'https://katys-care-api.herokuapp.com/v1'
 
 
 # login required decorator
@@ -40,13 +44,30 @@ def welcome():
 def login():
     error = None
     if request.method == 'POST':
-        if (request.form['username'] != 'admin') \
-                or request.form['password'] != 'admin':
-            error = 'Invalid Credentials. Please try again.'
-        else:
+ #       if (request.form['username'] != 'admin') \
+ #               or request.form['password'] != 'admin':
+ #           error = 'Invalid Credentials. Please try again.'
+ #       else:
+ #           session['logged_in'] = True
+ #           flash('You were logged in.')
+ #           return redirect(url_for('home'))
+        data ={}
+        username = request.form['username']
+        password = request.form['password']
+        data['email']=username
+        data['password']=password
+        json_data = json.dumps(data)
+        login_status = requests.post("{url}/token?include=user".format(url=base_url), json=data)
+        print login_status.status_code
+#        print json_data
+        if login_status.status_code == 200:
+            token = json.loads(login_status.text)['data']['id']
+            response = redirect(url_for('home'))
+            response.set_cookie('token',value=token)
             session['logged_in'] = True
-            flash('You were logged in.')
-            return redirect(url_for('home'))
+            return response
+        else:
+            error = 'Invalid Credentials. Please try again.'
     return render_template('login.html', error=error)
 
 
