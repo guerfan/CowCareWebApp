@@ -1,7 +1,26 @@
-{% block content %}
+{%extends "login_base.html"%}
+{%block content%}
 <script type="text/javascript">
 	function test_func(data){
-		console.log(data)
-	test_func({{data|tojson}})
+		var dataObj = JSON.parse(data)['data'][0]['attributes']['body']
+		var head = dataObj['head'];
+		var childrens = dataObj[head]['children'];
+		console.log(head);
+		console.log(childrens);
+		document.write(head);
+		children(dataObj,head)
+	}
+	function children(data,head){
+		var childrens = data[head]['children'];
+		document.write("<br>" + childrens.length)
+		var children_length = childrens.length
+		if (children_length >0){
+			for(var i =0;i<children_length;i++){
+				document.write("<br>children:" + childrens[i])
+				children(data, childrens[i]);
+			}
+		}
+	}
+	test_func({{data|safe}});
 </script>
-{% endblock %}
+{%endblock%}

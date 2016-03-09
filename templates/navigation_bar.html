@@ -1,0 +1,7 @@
+{%extends "base.html"%}
+{% set navigation_bar = [
+    ('/farm', 'farms', 'Farms'),
+    ('/cows', 'cows', 'Cows'),
+    ('/treatment_plans', 'treatment plans', 'Treatment Plans')
+] -%}
+{% set active_page = active_page|default('home') -%}

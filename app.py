@@ -31,12 +31,6 @@ def login_required(f):
 @login_required
 def home():
     return render_template('index.html')  # render a template
-   
-
-
-@app.route('/welcome')
-def welcome():
-    return render_template('welcome.html')  # render a template
 
 
 # route for handling the login page logic
@@ -78,10 +72,10 @@ def logout():
     flash('You were logged out.')
     return redirect(url_for('welcome'))
 
-@app.route('/treatmentplan')
+@app.route('/treatment_plans')
 def treatmentplan():
-    r = open('plan.json').read()
-    raw = json.loads(r)
+    r = open('plan.json')
+    raw = json.dumps(r.read())
     return render_template('treatmentplan.html',data=raw)
 
 # start the server with the 'run()' method
