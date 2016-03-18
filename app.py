@@ -28,55 +28,75 @@ def login_required(f):
 
 # use decorators to link the function to a url
 @app.route('/')
-@login_required
+#@login_required
 def home():
     return render_template('index.html')  # render a template
-
 
 # route for handling the login page logic
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
     if request.method == 'POST':
- #       if (request.form['username'] != 'admin') \
- #               or request.form['password'] != 'admin':
- #           error = 'Invalid Credentials. Please try again.'
- #       else:
- #           session['logged_in'] = True
- #           flash('You were logged in.')
- #           return redirect(url_for('home'))
-        data ={}
-        username = request.form['username']
-        password = request.form['password']
-        data['email']=username
-        data['password']=password
-        json_data = json.dumps(data)
-        login_status = requests.post("{url}/token?include=user".format(url=base_url), json=data)
-        print login_status.status_code
-#        print json_data
-        if login_status.status_code == 200:
-            token = json.loads(login_status.text)['data']['id']
-            response = redirect(url_for('home'))
-            response.set_cookie('token',value=token)
-            session['logged_in'] = True
-            return response
-        else:
-            error = 'Invalid Credentials. Please try again.'
+        if request.form['action'] == 'Login':
+            data ={}
+            data['email']=request.form['username']
+            data['password']=request.form['password']
+            json_data = json.dumps(data)
+            login_status = requests.post("{url}/token?include=user".format(url=base_url), json=data)
+            if login_status.status_code == 200:
+                token = json.loads(login_status.text)['data']['id']
+                session['token'] = token
+                return redirect(url_for('home'))
+            else:
+                error = 'Invalid Credentials. Please try again.'
+        elif request.form['action'] == 'Register':
+                return redirect(url_for('register'))
     return render_template('login.html', error=error)
 
+@app.route('/register', methods = ['GET', 'POST'])
+def register():
+    error = None
+    if request.method == "POST":
+            data ={
+                "data":{
+                    "type": "users",
+                    "attributes": {
+                        "email": request.form['username'],
+                        "password": request.form['password']
+                    }
+                }
+            }
+            register_status = requests.post("{url}/users".format(url=base_url), json=data)
+            if register_status.status_code == 201:
+                error = 'You are registered, please sign in.'
+                return redirect(url_for('login'))
+            else:
+                error = 'Username is already used. Please try again.'
+    return render_template('register.html', error=error)
 
+# route for handling logout
 @app.route('/logout')
-@login_required
+# @login_required
 def logout():
-    session.pop('logged_in', None)
-    flash('You were logged out.')
-    return redirect(url_for('welcome'))
+    session.pop('token', None)
+    return redirect(url_for('home'))
 
+# route for handling displaying treatment plans list
 @app.route('/treatment_plans')
 def treatmentplan():
     r = open('plan.json')
     raw = json.dumps(r.read())
     return render_template('treatmentplan.html',data=raw)
+
+# route for handling displaying list of cows
+@app.route('/cows')
+def cowList():
+    return "cows list"
+
+# route for handling displaying list of farms
+@app.route('/farms')
+def farmList():
+    return "farms list"
 
 # start the server with the 'run()' method
 if __name__ == '__main__':
