@@ -1,24 +1,25 @@
-{%extends "login_base.html"%}
+<!-- {%extends "login_base.html"%} -->
 {%block content%}
 <script type="text/javascript">
 	function test_func(data){
-		var dataObj = JSON.parse(data)['data'][0]['attributes']['body']
+		document.write("<br><br><br><br><br><br><br><br><br><br><br><br>");
+		var dataObj = JSON.parse(data)['data'][0]['attributes']['body'];
 		var head = dataObj['head'];
+		document.write("<ul><li>" + head);
 		var childrens = dataObj[head]['children'];
-		console.log(head);
-		console.log(childrens);
-		document.write(head);
-		children(dataObj,head)
+		children(dataObj,head,0);
+		document.write("</li></ul>");
 	}
-	function children(data,head){
+	function children(data,head,depth){
 		var childrens = data[head]['children'];
-		document.write("<br>" + childrens.length)
-		var children_length = childrens.length
-		if (children_length >0){
-			for(var i =0;i<children_length;i++){
-				document.write("<br>children:" + childrens[i])
-				children(data, childrens[i]);
+		if (childrens.length>0){
+			document.write("<ul>");
+			for(var i =0;i<childrens.length;i++){
+				document.write("<li>" + childrens[i]);
+					children(data, childrens[i],depth++);
+				document.write("</li>")
 			}
+			document.write("</ul>");
 		}
 	}
 	test_func({{data|safe}});

@@ -91,7 +91,7 @@ def treatmentplan():
 # route for handling displaying list of cows
 @app.route('/cows')
 def cowList():
-    return "cows list"
+    return render_template('cows_list.html')
 
 # route for handling displaying list of farms
 @app.route('/farms')

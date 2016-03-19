@@ -39,7 +39,6 @@
                "648f01bf-8398-4d5d-bcf0-bea6bcc0b436":{
                   "wait":0,
                   "children":[
-                     "bafb81e5-c283-47e9-86d6-c9bdc2dd5541"
                   ],
                   "description":"Unfit for transport",
                   "icon":"http://example.com/untransportable.jpg"
