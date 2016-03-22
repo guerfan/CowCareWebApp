@@ -84,6 +84,8 @@ def logout():
 # route for handling displaying treatment plans list
 @app.route('/treatment_plans')
 def treatmentplan():
+    auth = {}
+    auth['Authorization'] = session['token']
     r = open('plan.json')
     raw = json.dumps(r.read())
     return render_template('treatmentplan.html',data=raw)
@@ -91,12 +93,18 @@ def treatmentplan():
 # route for handling displaying list of cows
 @app.route('/cows')
 def cowList():
-    return render_template('cows_list.html')
+    auth = {}
+    auth['Authorization'] = session['token']
+    cow_list_status = requests.get("{url}/farms".format(url=base_url),headers = auth)
+    return cow_list_status.text
 
 # route for handling displaying list of farms
 @app.route('/farms')
 def farmList():
-    return "farms list"
+    auth = {}
+    auth['Authorization'] = session['token']
+    farm_list_status = requests.get("{url}/farms".format(url=base_url),headers = auth)
+    return farm_list_status.text
 
 # start the server with the 'run()' method
 if __name__ == '__main__':
