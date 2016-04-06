@@ -4,16 +4,17 @@ from flask import Flask, render_template, redirect, \
 from functools import wraps
 import json
 import requests
+import uuid
 
 # create the application object
 app = Flask(__name__)
 
 # config
 app.secret_key = 'my precious'
-#base_url = 'http://localhost:10200/v1'
-base_url = 'https://katys-care-api.herokuapp.com/v1'
+base_url = 'http://localhost:10200/v1'
+#base_url = 'https://katys-care-api.herokuapp.com/v1'
 
-
+# add 200 padding
 # # login required decorator
 # def login_required(f):
 #     @wraps(f)
@@ -79,6 +80,7 @@ def register():
 @app.route('/logout')
 # @login_required
 def logout():
+    delete_status = requests.delete
     session.pop('token', None)
     return redirect(url_for('login'))
 
@@ -91,11 +93,13 @@ def treatmentplan():
     raw = json.dumps(r.read())
     return render_template('treatmentplan.html',data=raw)
 
+# str(uuid.uuid4())
+
 # route for handling displaying list of cows
 @app.route('/calves')
 def cowList():
     auth = {}
-    if session.has_key('token') == True:
+    if 'token' in session:
         auth['Authorization'] = session['token']
         calves_list_status = requests.get("{url}/calves".format(url=base_url),headers = auth)
     else:
@@ -105,7 +109,7 @@ def cowList():
 @app.route('/farms/<farm_id>')
 def farms_cows():
     auth = {}
-    if session.has_key('token') == True:
+    if 'token' in session:
         auth['Authorization'] = session['token']
         calves_list_status = requests.get("{url}/farms/{farm_id}?include=calves".format(url=base_url, farm_id=farm_id),headers = auth)
     else:
@@ -117,7 +121,7 @@ def farms_cows():
 # route for handling displaying list of farms
 @app.route('/farms')
 def farmList():
-        auth = {}
+    auth = {}
     if 'token' in session:
         auth['Authorization'] = session['token']
         farm_list_status = requests.get("{url}/users/{id}?include=vet_for".format(url=base_url, id=session['id']), headers=auth)

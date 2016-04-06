@@ -1,26 +1,166 @@
-<!-- {%extends "login_base.html"%} -->
+<!--<link rel="stylesheet" type="text/css" href="static/css/Test.css">-->
+    <link href="static/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="static/css/font-awesome.min.css" rel="stylesheet">
+    <link href="static/css/prettyPhoto.css" rel="stylesheet">
+    <link href="static/css/main.css" rel="stylesheet">
 {%block content%}
 <script type="text/javascript">
 	function test_func(data){
-		document.write("<br><br><br><br><br><br><br><br><br><br><br><br>");
-		var dataObj = JSON.parse(data)['data'][0]['attributes']['body'];
+		document.write('<div class="tree" id="chart">');
+		var dataObj_1 = JSON.parse(data)['data'][0]['attributes'];
+		var dataObj = dataObj_1['body']
+		document.write('<p id="title">'+dataObj_1['title']);
 		var head = dataObj['head'];
-		document.write("<ul><li>" + head);
+		document.write("<ul id = 'root'><li id="+head+"><p>" + head);
 		var childrens = dataObj[head]['children'];
-		children(dataObj,head,0);
-		document.write("</li></ul>");
+		children(dataObj,head);
+		document.write("</p></li></ul></div>");
+		var save_button =document.createElement("INPUT");
+		save_button.type = "button";
+		save_button.onclick = function(){save()};
+		save_button.value = "Save";
+		document.getElementById("chart").appendChild(save_button);
 	}
-	function children(data,head,depth){
+	function children(data,head){
 		var childrens = data[head]['children'];
+		document.write("<p id='"+head+"_Description'>"+data[head]['description']+"</p>");
+		document.write("<p id='"+head+"_Wait'>"+data[head]['wait']+"</p>");
+		document.write("<p id='"+head+"_Icon'>"+data[head]['icon']+"</p>");
+		document.write("<input type=button id="+head+"_Add"+ " value='Add' onclick=add('"+head+"')></input>")
 		if (childrens.length>0){
-			document.write("<ul>");
+			document.write("<ul id = "+head+"_Children>");
 			for(var i =0;i<childrens.length;i++){
-				document.write("<li>" + childrens[i]);
-					children(data, childrens[i],depth++);
-				document.write("</li>")
+				document.write("<li id = "+ childrens[i]+"><p>" + childrens[i]);
+					children(data, childrens[i]);
+				document.write("</p></li>")
 			}
+
 			document.write("</ul>");
 		}
+	}
+	function add(head){
+		var child_id=gen_uuid();
+		var child = document.createElement("LI");
+		child.id = child_id+"_Temp_Field";
+		var child_field=document.createElement("INPUT");
+		child_field.type="text";
+		child_field.id=child_id+"_Description";
+		child_field.placeholder="Description";
+		child.appendChild(child_field);
+
+		var submit_form = document.createElement("FORM");
+		submit_form.action="";
+		submit_form.method="POST";
+
+		var submit_button = document.createElement("INPUT");
+		submit_button.value = "submit";
+		submit_button.type = "button";
+		submit_button.id = child_id+"_Submit";
+		submit_button.onclick=function(){addNode(head,child_id)};
+		child.appendChild(submit_button);
+		var have_children = document.getElementById(head+"_Children");
+		console.log(head);
+		console.log(child_id);
+		if(!have_children){
+			var child_list = document.createElement("UL");
+			child_list.id = head+"_Children";
+			document.getElementById(head).appendChild(child_list);
+			have_children = document.getElementById(head+"_Children");
+		}
+		have_children.appendChild(child);
+	}
+
+	function addNode(head,child_id){
+		descript_loc =document.getElementById(child_id+"_Description");
+		descript = descript_loc.value;
+		console.log(descript);
+		if(descript){
+			document.getElementById(head+"_Children").removeChild(document.getElementById(child_id+"_Temp_Field"));
+			var create_child = document.createElement("LI");
+			create_child.id = child_id;
+			var id_text = document.createTextNode(child_id);
+			var descript_text = document.createTextNode(descript);
+			create_child.appendChild(id_text);
+
+			var break_element = document.createElement("br");
+			create_child.appendChild(break_element);
+			create_child.appendChild(descript_text);
+			var break_element = document.createElement("br");
+			create_child.appendChild(break_element);
+
+			add_button = document.createElement("INPUT");
+			add_button.type = "button";
+			add_button.id = child_id+"_Add";
+			add_button.value = "Add";
+			add_button.onclick = function(){add(child_id)};
+			create_child.appendChild(add_button);
+			document.getElementById(head+"_Children").appendChild(create_child);
+		}
+	}
+
+	function save(){
+		var json = {};
+		var head_id = document.getElementById("root").firstChild.id;
+		json['title']= document.getElementById("title").innerHTML;
+		json['body'] = translate_json(head_id);
+		console.log(json);
+		var y = JSON.stringify(json)
+		console.log(y);
+		var send_req = new XMLHttpRequest();
+		send_req.open("POST", "update", true);
+		send_req.setRequestHeader('Content-Type','application/json; charset=UTF-8');
+		send_req.send(y);
+		send_req.onloadend=function(){
+			console.log("success");
+		}
+	}
+
+	//Online source
+	function gen_uuid() {
+    	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    	    var r = Math.random()*16|0, v = c === 'x' ? r : (r&0x3|0x8);
+        	return v.toString(16);
+    	});
+	}
+
+	function translate_json(head_id){
+		body = {};
+		body['head']=head_id;
+		var temp_json={};
+		temp_json['wait']=document.getElementById(head_id+"_Wait").innerHTML;
+		temp_json['description']=document.getElementById(head_id+"_Description").innerHTML;
+		temp_json['icon']=document.getElementById(head_id+"_Icon").innerHTML;
+		var children_array = [];
+		if(document.getElementById(head_id+"_Children")){
+			var child_nodes = document.getElementById(head_id+"_Children").childNodes;
+			var i;
+			for(i=0; i<child_nodes.length;i++){
+				children_array.push(child_nodes[i].id);
+				translate_child(child_nodes[i].id);
+			}
+			temp_json['children']=children_array;
+		}
+		body[head_id]=temp_json;
+		return body;
+	}
+
+	function translate_child(head_id){
+		var temp_json = {};
+		temp_json['wait']=document.getElementById(head_id+"_Wait").innerHTML;
+		temp_json['description']=document.getElementById(head_id+"_Description").innerHTML;
+		temp_json['icon']=document.getElementById(head_id+"_Icon").innerHTML;
+		var children_array = [];
+		if(document.getElementById(head_id+"_Children")) {
+			var child_nodes = document.getElementById(head_id+"_Children").childNodes;
+			var i;
+			for(i=0; i<child_nodes.length;i++){
+				children_array.push(child_nodes[i].id);
+				translate_child(child_nodes[i].id);
+			}
+		}
+		temp_json['children']=children_array;
+		body[head_id]=temp_json
 	}
 	test_func({{data|safe}});
 </script>
