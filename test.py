@@ -12,7 +12,7 @@ token = json.loads(login_status.text)['data']['id']
 auth = {}
 auth['Authorization']=token
 
-##Setting vet's farm
+#Setting vet's farm
 # farm = {
 # 	'data':{
 # 		'type':'farms',
@@ -32,9 +32,9 @@ auth['Authorization']=token
 # print farm_status
 # farm_request = requests.get("{url}/farms".format(url=base_url), headers = auth)
 # print farm_status.text
-#print(json.dumps(json.loads(farm_request.text),indent = 4, sort_keys=True))
+# print(json.dumps(json.loads(farm_request.text),indent = 4, sort_keys=True))
 
-##Getting specific vet's farms
+# #Getting specific vet's farms
 # farm_request = requests.get("{url}/users/{id}?include=vet_for".format(url=base_url, id=data['email']), headers=auth)
 # print farm_request.text
 

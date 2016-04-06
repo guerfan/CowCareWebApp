@@ -1,9 +1,20 @@
 {% extends "login_base.html"%}
 {% block content %}
-<h1>Cows</h1>
-<ul>
-{%for cow in cows%}
-	<li>{{cow.id}}</li>
-{%endfor%}
-</ul>
+<div style="padding: 80px 0;" >
+<!-- Default panel contents -->
+	
+	<div class="list-group">
+		<li href="#" class="list-group-item active"> 
+		Calves 
+		</li>
+		{%for cow in cows%}
+			<a href="#" class="list-group-item">{{cow.id}}</a>
+		{%endfor%}
+
+	</div>
+	<div style="float: right;">
+	  <a href="/addfarms" class="button button-glow button-rounded button-caution">Add</a>
+	  <a href="#" class="button button-glow button-rounded button-royal">Delete</a>
+	</div>
+</div>
 {% endblock %}

@@ -1,9 +1,5 @@
 {% extends "login_base.html" %}
-{% block content %}
-
-<h1>Welcome to Flask!</h1>
-<br>
-<p>Click <a href="/">here</a> to go home.</p>
+{% block content %} 
 
 <div style="padding: 80px 0;" >
 	<form class="form-horizontal">
@@ -15,11 +11,10 @@
 
     <div class="control-group">
 
-          <!-- Text input-->
-          <label class="control-label" for="input01">Farm Name</label>
+         <!--  Text input -->
+          
           <div class="controls">
-            <input type="text" placeholder="Katy's farm" class="input-xlarge">
-            <p class="help-block">The name of the farm</p>
+            <input type="text" placeholder="New calve name" class="input-xlarge" name="calvename">
           </div>
         </div>
 
@@ -28,7 +23,8 @@
 
           <!-- Button -->
           <div class="controls">
-            <button class="btn btn-success">Submit</button>
+          	<input type="submit" class="btn btn-success" name="action" ></input>
+<!--             <button class="btn btn-success">Submit</button> -->
           </div>
         </div>
 
@@ -36,6 +32,6 @@
   </form>
   
 
-</div>
-
+</div>	
 {% endblock %}
+

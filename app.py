@@ -10,8 +10,8 @@ app = Flask(__name__)
 
 # config
 app.secret_key = 'my precious'
-base_url = 'http://localhost:10200/v1'
-#base_url = 'https://katys-care-api.herokuapp.com/v1'
+#base_url = 'http://localhost:10200/v1'
+base_url = 'https://katys-care-api.herokuapp.com/v1'
 
 
 # # login required decorator
@@ -112,17 +112,57 @@ def farms_cows():
         return redirect(url_for('login'))
     return farms_cows_status.text
 
+
+
 # route for handling displaying list of farms
 @app.route('/farms')
 def farmList():
-    auth = {}
-    if session.has_key('token') == True:
+        auth = {}
+    if 'token' in session:
         auth['Authorization'] = session['token']
         farm_list_status = requests.get("{url}/users/{id}?include=vet_for".format(url=base_url, id=session['id']), headers=auth)
+        farm_cows = requests.get("{url}/calves".format(url=base_url),headers = auth)
     else:
         return redirect(url_for('login'))
-    return farm_list_status.text
+    return farm_list_status.text + farm_cows.text 
 #    return render_template('farms_list.html', data=json.dumps(farm_list_status.text))
+
+
+
+
+@app.route('/addfarms', methods=['GET', 'POST'])
+def farmListAdd():
+    # auth = {}
+    # if session.has_key('token') == True:
+    #     auth['Authorization'] = session['token']
+    #     if request.method == "POST":
+    #         farm = {
+    #             'data':{
+    #                 'type':'farms',
+    #                 'attributes':{
+    #                     'name':request.form['farmname'],
+    #                 },
+    #                 'relationships':{
+    #                     'veterinarian':
+    #                         {'data': [{
+    #                             'type':'users',
+    #                             'id': data['email']}]
+    #                         }
+    #                 }
+    #             }
+    #         }
+    #         farm_status = requests.post("{url}/farms".format(url=base_url), json = farm, headers = auth)
+    #         if rfarm_status == 201:
+    #             error = 'You are registered, please sign in.'
+    #             return redirect(url_for('farms'))
+    #         else:
+    #             error = 'Farm is already existed. Please try again.'
+    # else:
+    #     return redirect(url_for('login'))
+    return render_template('farms_list_add.html')
+
+
+
 
 # start the server with the 'run()' method
 if __name__ == '__main__':
