@@ -10,7 +10,7 @@ import uuid
 app = Flask(__name__)
 
 # config
-app.secret_key = 'my precious'
+app.secret_key = 'my precious'  
 base_url = 'http://localhost:10200/v1'
 #base_url = 'https://katys-care-api.herokuapp.com/v1'
 
@@ -101,20 +101,26 @@ def cowList():
     auth = {}
     if 'token' in session:
         auth['Authorization'] = session['token']
+        a = requests.get("{url}/users/{id}?include=vet_for".format(url=base_url, id=session['id']), headers=auth)   
+
         calves_list_status = requests.get("{url}/calves".format(url=base_url),headers = auth)
+        calves = json.loads(calves_list_status.text)['included']
     else:
         return redirect(url_for('login'))
-    return calves_list_status.text
+    # return render_template('cows_list.html')
+    return a.text
 
 @app.route('/farms/<farm_id>')
-def farms_cows():
+def farms_cows(farm_id):
     auth = {}
     if 'token' in session:
         auth['Authorization'] = session['token']
         calves_list_status = requests.get("{url}/farms/{farm_id}?include=calves".format(url=base_url, farm_id=farm_id),headers = auth)
+
     else:
         return redirect(url_for('login'))
-    return farms_cows_status.text
+    # return render_template('cows_list.html',farm_id = farm_id)
+    return calves_list_status.text
 
 
 
@@ -124,46 +130,99 @@ def farmList():
     auth = {}
     if 'token' in session:
         auth['Authorization'] = session['token']
-        farm_list_status = requests.get("{url}/users/{id}?include=vet_for".format(url=base_url, id=session['id']), headers=auth)
+        farm_list_status = requests.get("{url}/users/{id}?include=vet_for".format(url=base_url, id=session['id']), headers=auth)   
+        farms = json.loads(farm_list_status.text)['included']
+    
         farm_cows = requests.get("{url}/calves".format(url=base_url),headers = auth)
     else:
         return redirect(url_for('login'))
-    return farm_list_status.text + farm_cows.text 
-#    return render_template('farms_list.html', data=json.dumps(farm_list_status.text))
+    return render_template('farms_list.html', farms=farms)
+    
+    #return render_template('farms_list.html', data=json.dumps(farm_list_status.text))
 
 
 
 
 @app.route('/addfarms', methods=['GET', 'POST'])
 def farmListAdd():
-    # auth = {}
-    # if session.has_key('token') == True:
-    #     auth['Authorization'] = session['token']
-    #     if request.method == "POST":
-    #         farm = {
-    #             'data':{
-    #                 'type':'farms',
-    #                 'attributes':{
-    #                     'name':request.form['farmname'],
-    #                 },
-    #                 'relationships':{
-    #                     'veterinarian':
-    #                         {'data': [{
-    #                             'type':'users',
-    #                             'id': data['email']}]
-    #                         }
-    #                 }
-    #             }
-    #         }
-    #         farm_status = requests.post("{url}/farms".format(url=base_url), json = farm, headers = auth)
-    #         if rfarm_status == 201:
-    #             error = 'You are registered, please sign in.'
-    #             return redirect(url_for('farms'))
-    #         else:
-    #             error = 'Farm is already existed. Please try again.'
-    # else:
-    #     return redirect(url_for('login'))
+    auth = {}
+    if session.has_key('token') == True:
+        auth['Authorization'] = session['token']
+        if request.method == "POST":
+            farm = {
+                'data':{
+                    'type':'farms',
+                    'attributes':{
+                        'name':request.form['farmname'],
+                    },
+                    'relationships':{
+                        'veterinarian':
+                            {'data': [{
+                                'type':'users',
+                                'id': session['id']}]
+                            }
+                    }
+                }
+            }
+            farm_status = requests.post("{url}/farms".format(url=base_url), json = farm, headers = auth)
+            if farm_status == 201:
+                error = 'You are registered, please sign in.'
+                return redirect(url_for('farms'))
+            else:
+                error = 'Farm is already existed. Please try again.'
+    else:
+        return redirect(url_for('login'))
     return render_template('farms_list_add.html')
+
+# @app.route('/addcalves', methods=['GET', 'POST'])
+# def calvesListAdd():
+#     auth = {}
+#     if session.has_key('token') == True:
+#         auth['Authorization'] = session['token']
+#         if request.method == "POST":
+#             farm_list_status = requests.get("{url}/users/{id}?include=vet_for".format(url=base_url, id=session['id']), headers=auth)   
+#             farms = json.loads(farm_list_status.text)['included']
+#             farm_id = 0
+#             for farm in farms: 
+#                 if farm['attributes']['name'] == request.form['farmname']:
+#                     farm_id = farm['attributes']['id']
+
+
+#             print farm_id
+
+
+
+#             calf = {
+#                 'data':{
+#                     'type':'calves',
+#                     'attributes':{
+#                         'id':request.form['calfname'],
+#                         'type':'calves'
+#                     },
+#                     'relationships':{
+#                         'farm':
+#                             {'data': [{
+#                                 'type':'farms',
+#                                 'id': farm_id}]
+#                             }
+#                     },
+#                     'treatment_plan': {
+#                         'data': {
+#                             'type': 'treatment_plans',
+#                             'id': ''
+#                         }
+#                     }
+#                 }
+#             }
+#             calf_status = requests.post("{url}/calves".format(url=base_url), json = calf, headers = auth)
+#             if calf_status == 201:
+#                 error = 'You are registered, please sign in.'
+#                 return redirect(url_for('calves'))
+#             else:
+#                 error = 'Calf is already existed. Please try again.'
+#     else:
+#         return redirect(url_for('login'))
+#     return render_template('cows_list_add.html')
 
 
 

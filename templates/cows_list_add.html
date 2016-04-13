@@ -2,10 +2,10 @@
 {% block content %} 
 
 <div style="padding: 80px 0;" >
-	<form class="form-horizontal">
+<form class="form-horizontal" action="" method="POST">
     <fieldset>
       <div id="legend" class="">
-        <legend class="">New Farm</legend>
+        <legend class="">New Calf</legend>
       </div>
     
 
@@ -14,7 +14,8 @@
          <!--  Text input -->
           
           <div class="controls">
-            <input type="text" placeholder="New calve name" class="input-xlarge" name="calvename">
+            <input type="text" placeholder="New calf name" class="input-xlarge" name="calfname">
+            <input type="text" placeholder="Belongs to farm" class="input-xlarge" name="farmname">
           </div>
         </div>
 
@@ -23,7 +24,7 @@
 
           <!-- Button -->
           <div class="controls">
-          	<input type="submit" class="btn btn-success" name="action" ></input>
+            <input type="submit" class="btn btn-success" name="action" ></input>
 <!--             <button class="btn btn-success">Submit</button> -->
           </div>
         </div>
@@ -32,6 +33,5 @@
   </form>
   
 
-</div>	
+</div>  
 {% endblock %}
-

@@ -7,9 +7,9 @@
 		<li href="#" class="list-group-item active"> 
 		Farms 
 		</li>
-		{%for farm in farms%}
-			<a href="#" class="list-group-item">{{farm.id}}</a>
-		{%endfor%}
+		{% for farm in farms %}
+			<a href="farms/{{ farm['attributes']['name'] }}" class="list-group-item">{{ farm['attributes']['name'] }}</a>
+		{% endfor %}
 
 	</div>
 	<div style="float: right;">
