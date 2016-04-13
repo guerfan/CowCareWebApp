@@ -1,0 +1,20 @@
+{% extends "login_base.html" %}
+{% block content %}
+<div style="padding: 80px 0;" >
+<!-- Default panel contents -->
+	
+	<div class="list-group">
+		<li href="#" class="list-group-item active"> 
+		Treatments 
+		</li>
+		{% for treatment in treatment %}
+			<a href='/treatment_plans/{{ treatment['attributes']['id'] }}' class="list-group-item">{{ treatment['attributes']['title'] }}</a>
+		{% endfor %}
+
+	</div>
+	<div style="float: right;">
+	  <a href="/addtreatment" class="button button-glow button-rounded button-caution">Add</a>
+	  <a href="#" class="button button-glow button-rounded button-royal">Delete</a>
+	</div>
+</div>
+{% endblock %}

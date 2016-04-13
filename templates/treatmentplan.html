@@ -5,14 +5,17 @@
     <link href="static/css/prettyPhoto.css" rel="stylesheet">
     <link href="static/css/main.css" rel="stylesheet">
 {%block content%}
+<style>
+
+</style>
 <script type="text/javascript">
 	function test_func(data){
 		document.write('<div class="tree" id="chart">');
-		var dataObj_1 = JSON.parse(data)['data'][0]['attributes'];
+		var dataObj_1 = data['body']['data'][0]['attributes'];
 		var dataObj = dataObj_1['body']
 		document.write('<p id="title">'+dataObj_1['title']);
 		var head = dataObj['head'];
-		document.write("<ul id = 'root'><li id="+head+"><p>" + head);
+		document.write("<ul id = 'root'><li id="+head+"><p>");
 		var childrens = dataObj[head]['children'];
 		children(dataObj,head);
 		document.write("</p></li></ul></div>");
