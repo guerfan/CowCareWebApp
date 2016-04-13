@@ -86,13 +86,29 @@ def logout():
 
 # route for handling displaying treatment plans list
 @app.route('/treatment_plans')
-def treatmentplan():
+def treatmentplanList():
     auth = {}
     auth['Authorization'] = session['token']
-    r = open('plan.json')
-    raw = json.dumps(r.read())
-    return render_template('treatmentplan.html',data=raw)
+    treatment_plan_status = requests.get("{url}/treatment_plans".format(url=base_url),headers=auth)
+    return treatment_plan_status.text
 
+@app.route('/treatment_plans/<treatmentid>')
+def treatmentplan(treatmentid):
+    auth = {}
+    auth['Authorization'] = session['token']
+    treatment_plan_status = requests.get("{url}/treatment_plans".format(url=base_url, id = treatmentid),headers =auth)
+    id_treatment_plan = json.loads(treatment_plan_status.text)
+    json_obj = id_treatment_plan['data']
+    for plan in json_obj:
+        if plan['id'] == treatmentid:
+            return render_template('treatmentplan.html',data = json.dumps(plan['attributes']))
+
+@app.route('/treatment_plans/save')
+def save():
+    auth
+    auth = {}
+    auth['Authorization'] = session['token']
+    return redirect(url_for(treatmentplan))
 # str(uuid.uuid4())
 
 # route for handling displaying list of cows
