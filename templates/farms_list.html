@@ -8,7 +8,7 @@
 		Farms 
 		</li>
 		{% for farm in farms %}
-			<a href="farms/{{ farm['attributes']['name'] }}" class="list-group-item">{{ farm['attributes']['name'] }}</a>
+			<a href="/{{ farm['attributes']['id'] }}" class="list-group-item">{{ farm['attributes']['name'] }}</a>
 		{% endfor %}
 
 	</div>
