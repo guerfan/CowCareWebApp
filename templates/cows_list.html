@@ -8,8 +8,10 @@
 		Calves 
 		</li>
 		{%for cow in cows%}
-			<a href="#" class="list-group-item">{{cow.id}}</a>
+			<a href="#" class="list-group-item">{{cow['attributes']['name']}}</a>
 		{%endfor%}
+	
+
 
 	</div>
 	<div style="float: right;">

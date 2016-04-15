@@ -11,8 +11,8 @@ app = Flask(__name__)
 
 # config
 app.secret_key = 'my precious'  
-base_url = 'http://localhost:10200/v1'
-#base_url = 'https://katys-care-api.herokuapp.com/v1'
+# base_url = 'http://localhost:10200/v1'
+base_url = 'https://katys-care-api.herokuapp.com/v1'
 
 # add 200 padding
 # # login required decorator
@@ -31,7 +31,7 @@ base_url = 'http://localhost:10200/v1'
 @app.route('/')
 #@login_required
 def home():
-    return render_template('index.html')  # render a template
+    return render_template('index.html')  # render a template name=session['id']
 
 # route for handling the login page logic
 @app.route('/login', methods=['GET', 'POST'])
@@ -123,20 +123,21 @@ def cowList():
         calves = json.loads(calves_list_status.text)['included']
     else:
         return redirect(url_for('login'))
-    # return render_template('cows_list.html')
-    return a.text
+    return render_template('cows_list.html')
+    # return a.text
 
-@app.route('/farms/<farm_id>')
+@app.route('/<farm_id>')
 def farms_cows(farm_id):
     auth = {}
     if 'token' in session:
         auth['Authorization'] = session['token']
         calves_list_status = requests.get("{url}/farms/{farm_id}?include=calves".format(url=base_url, farm_id=farm_id),headers = auth)
+        cows = json.loads(calves_list_status.text)['included']
 
     else:
         return redirect(url_for('login'))
-    # return render_template('cows_list.html',farm_id = farm_id)
-    return calves_list_status.text
+    return render_template('cows_list.html',cows = cows)
+    # return calves_list_status.text
 
 
 
@@ -153,6 +154,8 @@ def farmList():
     else:
         return redirect(url_for('login'))
     return render_template('farms_list.html', farms=farms)
+
+
     
     #return render_template('farms_list.html', data=json.dumps(farm_list_status.text))
 
@@ -190,55 +193,52 @@ def farmListAdd():
         return redirect(url_for('login'))
     return render_template('farms_list_add.html')
 
-# @app.route('/addcalves', methods=['GET', 'POST'])
-# def calvesListAdd():
-#     auth = {}
-#     if session.has_key('token') == True:
-#         auth['Authorization'] = session['token']
-#         if request.method == "POST":
-#             farm_list_status = requests.get("{url}/users/{id}?include=vet_for".format(url=base_url, id=session['id']), headers=auth)   
-#             farms = json.loads(farm_list_status.text)['included']
-#             farm_id = 0
-#             for farm in farms: 
-#                 if farm['attributes']['name'] == request.form['farmname']:
-#                     farm_id = farm['attributes']['id']
+@app.route('/addcalves', methods=['GET', 'POST'])
+def calvesListAdd():
+    auth = {}
+    if session.has_key('token') == True:
+        auth['Authorization'] = session['token']
+        if request.method == "POST":
+            farm_list_status = requests.get("{url}/users/{id}?include=vet_for".format(url=base_url, id=session['id']), headers=auth)   
+            farms = json.loads(farm_list_status.text)['included']
+            farm_id = 0
+            for farm in farms: 
+                if farm['attributes']['name'] == request.form['farmname']:
+                    farm_id = farm['attributes']['id']
 
-
-#             print farm_id
-
-
-
-#             calf = {
-#                 'data':{
-#                     'type':'calves',
-#                     'attributes':{
-#                         'id':request.form['calfname'],
-#                         'type':'calves'
-#                     },
-#                     'relationships':{
-#                         'farm':
-#                             {'data': [{
-#                                 'type':'farms',
-#                                 'id': farm_id}]
-#                             }
-#                     },
-#                     'treatment_plan': {
-#                         'data': {
-#                             'type': 'treatment_plans',
-#                             'id': ''
-#                         }
-#                     }
-#                 }
-#             }
-#             calf_status = requests.post("{url}/calves".format(url=base_url), json = calf, headers = auth)
-#             if calf_status == 201:
-#                 error = 'You are registered, please sign in.'
-#                 return redirect(url_for('calves'))
-#             else:
-#                 error = 'Calf is already existed. Please try again.'
-#     else:
-#         return redirect(url_for('login'))
-#     return render_template('cows_list_add.html')
+            calf = {
+                'data':{
+                    'type':'calves',
+                    'attributes':{
+                        'name':request.form['calfname'],
+                        'type':'calves',
+                        'cid':request.form['cid']
+                    },
+                    'relationships':{
+                        'farm':
+                            {'data': {
+                                'type':'farms',
+                                'id': farm_id}
+                            }
+                    },
+                    'treatment_plan': {
+                        'data': {
+                            'type': 'treatment_plans',
+                            'id': ''
+                        }
+                    }
+                }
+            }
+            calf_status = requests.post("{url}/calves".format(url=base_url), json = calf, headers = auth)
+            print calf_status.text
+            if calf_status == 201:
+                error = 'You are registered, please sign in.'
+                return redirect(url_for('calves'))
+            else:
+                error = 'Calf is already existed. Please try again.'
+    else:
+        return redirect(url_for('login'))
+    return render_template('cows_list_add.html')
 
 
 
