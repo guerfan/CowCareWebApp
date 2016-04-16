@@ -5,8 +5,8 @@ import pprint
 
 base_url = 'http://localhost:10200/v1'
 data={}
-data['email']='test@test.com'
-data['password']='test'
+data['email']='allen@example.com'
+data['password']='allen'
 login_status = requests.post("{url}/token?include=user".format(url=base_url), json=data)
 token = json.loads(login_status.text)['data']['id']
 auth = {}

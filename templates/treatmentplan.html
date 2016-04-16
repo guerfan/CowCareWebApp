@@ -11,13 +11,13 @@
 <script type="text/javascript">
 	function test_func(data){
 		document.write('<div class="tree" id="chart">');
-		var dataObj_1 = data['body']['data'][0]['attributes'];
-		var dataObj = dataObj_1['body']
-		document.write('<p id="title">'+dataObj_1['title']);
-		var head = dataObj['head'];
+		console.log(data);
+		var dataTree=data['body'];
+		document.write('<p id="title">'+data['title']);
+		var head = dataTree['head'];
 		document.write("<ul id = 'root'><li id="+head+"><p>");
-		var childrens = dataObj[head]['children'];
-		children(dataObj,head);
+		var childrens = dataTree[head]['children'];
+		children(dataTree,head);
 		document.write("</p></li></ul></div>");
 		var save_button =document.createElement("INPUT");
 		save_button.type = "button";
