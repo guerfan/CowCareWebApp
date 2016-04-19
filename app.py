@@ -106,6 +106,8 @@ def save():
     auth
     auth = {}
     auth['Authorization'] = session['token']
+    r.read();
+    print r
     return redirect(url_for(treatmentplan))
 # str(uuid.uuid4())
 

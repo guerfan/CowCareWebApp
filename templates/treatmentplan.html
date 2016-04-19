@@ -1,30 +1,40 @@
 {% extends "login_base.html" %}
 {% block content %}
-
+<div style="padding:80px 0;">
 <script type="text/javascript">
-	function test_func(data){
-		document.write('<div class="tree" id="chart">');
-		console.log(data);
-		var dataTree=data['body'];
-		document.write('<p id="title">'+data['title']);
+	function create_Tree(data){
+		var dataTree = data['body'];
 		var head = dataTree['head'];
+
+		//Format html to theme
+		document.write('<div class="list-group"><div class="list-group-item active" id="title">'+data['title']+'</div>')
+
+		//Create tree
+		document.write('<div class="tree list-group-item" id="chart">');
+		document.write("<p id='treatment_id'>"+data['id']+"<p>");
 		document.write("<ul id = 'root'><li id="+head+"><p>");
+
+		//Grabbing children from head and creating tree
 		var childrens = dataTree[head]['children'];
 		children(dataTree,head);
 		document.write("</p></li></ul>");
+
+		//Creating save button
 		var save_button =document.createElement("INPUT");
 		save_button.type = "button";
 		save_button.onclick = function(){save()};
 		save_button.value = "Save";
 		document.write("</div>");
 		document.getElementById("chart").appendChild(save_button);
+		document.write('</div>');
 	}
 	function children(data,head){
 		var childrens = data[head]['children'];
 		document.write("<p id='"+head+"_Description'>"+data[head]['description']+"</p>");
-		//document.write("<p id='"+head+"_Wait'>"+data[head]['wait']+"</p>");
-		//document.write("<p id='"+head+"_Icon'>"+data[head]['icon']+"</p>");
-		document.write("<input type=button id="+head+"_Add"+ " value='+' onclick=add('"+head+"')></input>")
+		document.write("<p id='"+head+"_Wait'>"+data[head]['wait']+"</p>");
+		document.write("<p id='"+head+"_Icon'>"+data[head]['icon']+"</p>");
+		document.write("<input type=button id="+head+"_Add"+ " class ='btn btn-primary btn-sm' value='+' onclick=add('"+head+"')></input>")
+		document.write("<input type=button id="+head+"_Delete"+ " class ='btn btn-primary btn-sm' value='x' onclick=remove('"+head+"')></input>")
 		if (childrens.length>0){
 			document.write("<ul id = "+head+"_Children>");
 			for(var i =0;i<childrens.length;i++){
@@ -57,8 +67,6 @@
 		submit_button.onclick=function(){addNode(head,child_id)};
 		child.appendChild(submit_button);
 		var have_children = document.getElementById(head+"_Children");
-		console.log(head);
-		console.log(child_id);
 		if(!have_children){
 			var child_list = document.createElement("UL");
 			child_list.id = head+"_Children";
@@ -71,13 +79,12 @@
 	function addNode(head,child_id){
 		descript_loc =document.getElementById(child_id+"_Description");
 		descript = descript_loc.value;
-		console.log(descript);
 		if(descript){
 			document.getElementById(head+"_Children").removeChild(document.getElementById(child_id+"_Temp_Field"));
 			var create_child = document.createElement("LI");
 			create_child.id = child_id;
 			var id_text = document.createTextNode(child_id);
-			var descript_text = document.createTextNode(descript);
+			var descript_text = document.creaateTextNode(descript);
 			create_child.appendChild(id_text);
 
 			var break_element = document.createElement("br");
@@ -96,20 +103,25 @@
 		}
 	}
 
+	function remove(head){
+		console.log(rawr);
+	}
+
 	function save(){
 		var json = {};
 		var head_id = document.getElementById("root").firstChild.id;
+		json['id']=document.getElementById("treatment_id").innerHTML;
 		json['title']= document.getElementById("title").innerHTML;
 		json['body'] = translate_json(head_id);
-		console.log(json);
+		console.log(json)
 		var y = JSON.stringify(json)
-		console.log(y);
 		var send_req = new XMLHttpRequest();
-		send_req.open("POST", "update", true);
+		send_req.open("POST", "save", true);
 		send_req.setRequestHeader('Content-Type','application/json; charset=UTF-8');
 		send_req.send(y);
 		send_req.onloadend=function(){
 			console.log("success");
+			console.log(send_req)
 		}
 	}
 
@@ -159,6 +171,6 @@
 		temp_json['children']=children_array;
 		body[head_id]=temp_json
 	}
-	test_func({{data|safe}});
+	create_Tree({{data|safe}});
 </script>
 {%endblock%}

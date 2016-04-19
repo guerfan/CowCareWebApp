@@ -6,6 +6,7 @@
 	text-align: center;
 	font-size: .75vw;
 	overflow:auto;
+	color: black;
 }
 
 .tree ul {
@@ -107,6 +108,6 @@ input[value=Save]{
 	color:grey;
 */
 	position:absolute;
-	bottom:10vw;
-	left:10;
+	bottom:1vw;
+	left:center;
 }
