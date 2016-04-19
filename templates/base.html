@@ -32,12 +32,12 @@
         {{ message }}
       {% endfor %}
     </div>
-    <script src="static/js/jquery.js"></script>
-    <script src="static/js/bootstrap.min.js"></script>
-    <script src="static/js/jquery.isotope.min.js"></script>
-    <script src="static/js/jquery.prettyPhoto.js"></script>
-    <script src="static/js/main.js"></script>
-    <script src="static/js/jquery-2.1.1.min.js" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.isotope.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.prettyPhoto.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery-2.1.1.min.js') }}" type="text/javascript"></script>
     <script>
     $('#login-button').click(function (event) {
     event.preventDefault();
