@@ -1,0 +1,112 @@
+
+.tree{
+	/*Debugging/editing helpers */
+/*	border-style:solid;
+*/
+	text-align: center;
+	font-size: .75vw;
+	overflow:auto;
+}
+
+.tree ul {
+	/*Debugging/editing helpers */
+/*	border-style:dotted;
+	border-color: blue;*/
+
+	padding-top: 20px;
+	position: relative;
+	display: -webkit-flex;
+	display: flex;
+	display -moz-flex;
+	display -ms-flex;
+	
+}
+
+.tree li {
+	/*Debugging/editing helpers */
+/*	border-style:solid;*/
+
+	float: left;
+	list-style-type: none;
+	margin: 0px auto 10px auto;
+	position:relative;
+	padding: 1% 5px 0 5px;
+
+}
+
+/*Connectors left and right */
+
+.tree li::before, .tree li::after{
+	/*Debugging/editing helpers */
+/*	border-style:groove;
+	border-color:blue;*/
+
+	content: '';
+	position: absolute;
+	top: 0;
+	right: 50%;
+	border-top: 1px solid #ccc;
+	width: 50%;
+	height: 20px;
+}
+
+ .tree li::after{
+ 	/*Debugging/editing helpers */
+/* 	border-style:groove;
+	border-color:blue;*/
+
+	right: auto;
+	left: 50%;
+	border-left: 1px solid #ccc;
+ }
+
+/* Remove connectors from only child */
+.tree li:only-child::after, .tree li:only-child::before {
+	display: none;
+}
+
+.tree li:first-child::before, .tree li:last-child::after{
+	border: 0 none;
+}
+
+.tree li:last-child::before{
+	border-right: 1px solid #ccc;
+	border-radius: 0 5px 0 0;
+	-webkit-border-radius: 0 5px 0 0;
+	-moz-border-radius: 0 5px 0 0;
+}
+
+.tree li:first-child::after{
+	border-radius: 5px 0 0 0;
+}
+
+.tree ul ul::before{
+	content: '';
+	position: absolute; top: 0; left: 50%;
+	border-left: 1px solid #ccc;
+	width: 0; height: 20px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+input[value=Save]{
+	/*Debugging/editing helpers */
+/*	border-style:groove;
+	color:grey;
+*/
+	position:absolute;
+	bottom:10vw;
+	left:10;
+}

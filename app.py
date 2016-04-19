@@ -91,19 +91,15 @@ def treatmentplanList():
     auth['Authorization'] = session['token']
     treatment_plan_status = requests.get("{url}/treatment_plans".format(url=base_url),headers=auth)
     json_treatment_list = json.loads(treatment_plan_status.text)['data']
-    print json.dumps(json_treatment_list)
     return render_template('treatment_list.html', treatment=json_treatment_list)
 
 @app.route('/treatment_plans/<treatmentid>')
 def treatmentplan(treatmentid):
     auth = {}
     auth['Authorization'] = session['token']
-    treatment_plan_status = requests.get("{url}/treatment_plans".format(url=base_url, id = treatmentid),headers =auth)
-    id_treatment_plan = json.loads(treatment_plan_status.text)
-    json_obj = id_treatment_plan['data']
-    for plan in json_obj:
-        if plan['id'] == treatmentid:
-            return render_template('treatmentplan.html',data = json.dumps(plan['attributes']))
+    treatment_plan_status = requests.get("{url}/treatment_plans/{id}".format(url=base_url, id = treatmentid),headers =auth)
+    id_treatment_plan = json.loads(treatment_plan_status.text)['data']['attributes']
+    return render_template('treatmentplan.html',data = json.dumps(id_treatment_plan))
 
 @app.route('/treatment_plans/save')
 def save():
