@@ -12,7 +12,7 @@ app = Flask(__name__)
 # config
 app.secret_key = 'my precious'  
 base_url = 'http://localhost:10200/v1'
-#base_url = 'https://katys-care-api.herokuapp.com/v1'
+# base_url = 'https://katys-care-api.herokuapp.com/v1'
 
 # add 200 padding
 # # login required decorator
@@ -97,6 +97,7 @@ def treatmentplanList():
 def treatmentplan(treatmentid):
     auth = {}
     auth['Authorization'] = session['token']
+    print auth
     treatment_plan_status = requests.get("{url}/treatment_plans/{id}".format(url=base_url, id = treatmentid),headers =auth)
     id_treatment_plan = json.loads(treatment_plan_status.text)['data']['attributes']
     if request.method == "POST":
@@ -109,6 +110,8 @@ def treatmentplan(treatmentid):
         }
         updated_attributes = request.get_json()
         update_plan_status = requests.patch("{url}/treatment_plans/{treatmentid}".format(url=base_url, treatmentid=treatmentid), headers=auth, json=updated_plan);
+        print update_plan_status.text
+        print update_plan_status.status_code
     return render_template('treatmentplan.html',data = json.dumps(id_treatment_plan))
 
 @app.route('/treatment_plans/<treatment_plan>')

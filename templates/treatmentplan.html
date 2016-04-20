@@ -12,6 +12,8 @@
 		//Create tree
 		document.write('<div class="tree list-group-item" id="chart">');
 		document.write("<p id='treatment_id' class='hidden'>"+data['id']+"<p>");
+
+		// Head id
 		document.write("<ul id = 'root'><li id="+head+"><p>");
 
 		//Grabbing children from head and creating tree
@@ -28,24 +30,35 @@
 		document.getElementById("chart").appendChild(save_button);
 		document.write('</div>');
 	}
+
+	// Function to recrusively create tree from json file
 	function children(data,head){
+		//Child info
 		var childrens = data[head]['children'];
 		document.write("<p id='"+head+"_Description'>"+data[head]['description']+"</p>");
 		document.write("<p id='"+head+"_Wait' class='hidden'>"+data[head]['wait']+"</p>");
 		document.write("<p id='"+head+"_Icon' class='hidden'>"+data[head]['icon']+"</p>");
+
+		//Buttons
 		document.write("<input type=button id="+head+"_Add"+ " class ='btn btn-primary btn-xs' value='+' onclick=add('"+head+"')></input>")
-		document.write("<input type=button id="+head+"_Delete"+ " class ='btn btn-danger btn-xs' value='x' onclick=remove('"+head+"')></input>")
+		document.write("<input type=button id="+head+"_Delete"+ " class ='btn btn-danger btn-xs' value='x' onclick=removeBranch('"+head+"')></input>")
+
+		//Create childrens
 		if (childrens.length>0){
 			document.write("<ul id = "+head+"_Children>");
 			for(var i =0;i<childrens.length;i++){
-				document.write("<li id = "+ childrens[i]+"><p class='hidden'>" + childrens[i]);
-					children(data, childrens[i]);
+				// Display child id (Probably need to change css if you want to change way this is implemented)
+				document.write("<li id = "+ childrens[i]+"><p class='un-hidden'>" + childrens[i]);
+				children(data, childrens[i]);
 				document.write("</p></li>")
 			}
 
 			document.write("</ul>");
 		}
 	}
+
+	// Function to add child
+	//TODO: Clean up and add other buttons and change implementation
 	function add(head){
 		var child_id=gen_uuid();
 		var child = document.createElement("LI");
@@ -76,6 +89,7 @@
 		have_children.appendChild(child);
 	}
 
+	// Add's child to html
 	function addNode(head,child_id){
 		descript_loc =document.getElementById(child_id+"_Description");
 		descript = descript_loc.value;
@@ -104,10 +118,33 @@
 		}
 	}
 
-	function remove(head){
-		console.log(rawr);
+	//Remove child (delete) and branch
+	function removeBranch(head){
+			var child_element = document.getElementById(head);
+			var element_to_remove = child_element.parentNode; // list of all children's (if not root)
+			if(element_to_remove.childNodes.length>1){
+				element_to_remove=child_element;
+				var confirmed = confirm("Are you sure you want to delete this entire branch?");
+				if(confirmed==false){
+					return;
+				}
+			}
+			var parent_node = element_to_remove.parentNode;
+			var parent_name = parent_node.nodeName;
+			if(parent_name=="LI" || parent_name =="UL"){
+				var parent_id = parent_node.id;
+				var parent_element = document.getElementById(parent_id);
+				console.log(parent_id);
+				parent_element.removeChild(element_to_remove);
+			}else{ //Clear tree besides head
+				confirm("Are you sure you want to clear the entire chart?");
+				var child_id = child_element.id;
+				element_to_remove = document.getElementById(child_id+"_Children");
+				child_element.removeChild(element_to_remove);
+			}
 	}
 
+	// Post mes
 	function save(){
 		var id = document.getElementById("treatment_id").innerHTML;
 		var json = {};
@@ -122,8 +159,11 @@
 		send_req.setRequestHeader('Content-Type','application/json; charset=UTF-8');
 		send_req.send(treatment_plan_text);
 		send_req.onloadend=function(){
-			console.log("success");
-			console.log(send_req)
+			if(send_req.status == 200){
+				alert("Successfully saved");
+			}else{
+				alert("We have a problem...Don't know why but WE HAVE A PROBLEM");
+			}
 		}
 	}
 

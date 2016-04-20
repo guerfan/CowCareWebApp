@@ -32,11 +32,17 @@ treatment_plan={
          "icon": "http://example.com/euthanize.jpg",
          "children": []
       },
+        "91c64ff9-c354-4fc9-b8d1-dd1a3986fed8": {
+         "wait": "0",
+         "description": "Euthanize immediately",
+         "icon": "http://example.com/euthanize.jpg",
+         "children": []
+      },
       "d1ccebc3-48b1-45af-9075-d33f64e26e9d": {
          "wait": "0",
          "description": "Morbund or unfit for slaughter",
          "icon": "http://example.com/moribund.jpg",
-         "children": ["81c64ff9-c354-4fc9-b8d1-dd1a3986fed8"]
+         "children": ["91c64ff9-c354-4fc9-b8d1-dd1a3986fed8"]
       },
       "a388a993-a4ee-40b5-8629-3b21e29c480e": {
          "wait": "0",
