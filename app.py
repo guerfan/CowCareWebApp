@@ -101,6 +101,8 @@ def treatmentplanList():
     		return render_template('treatment_list.html', treatment=json_treatment_list)
 		if request.method == "DELETE":
 			print "delete"
+			delete_json = request.get_json();
+			print delete_json
     else:
         return redirect(url_for('login'))
     return render_template('treatment_list.html', treatment=json_treatment_list)
@@ -114,7 +116,6 @@ def treatmentplan(treatmentid):
 	    if treatment_plan_status.status_code!=200:
 	    	return redirect(url_for('login'))
 	    id_treatment_plan = json.loads(treatment_plan_status.text)['data']['attributes']
-	    print json.dumps(json.loads(treatment_plan_status.text), indent=4);
 	    if request.method == "POST":
 	        updated_attributes = request.get_json()
 	        updated_plan ={
@@ -123,7 +124,6 @@ def treatmentplan(treatmentid):
 	                'attributes':updated_attributes
 	            }
 	        }
-	        print updated_plan
 	        update_plan_status = requests.patch("{url}/treatment_plans/{treatmentid}".format(url=base_url, treatmentid=treatmentid), headers=auth, json=updated_plan);
     return render_template('treatmentplan.html',data = json.dumps(id_treatment_plan))
 
