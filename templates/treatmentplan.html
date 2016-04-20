@@ -40,9 +40,43 @@
 		document.write("<p id='"+head+"_Icon' class='hidden'>"+data[head]['icon']+"</p>");
 
 		//Buttons
-		document.write("<input type=button id="+head+"_Add"+ " class ='btn btn-primary btn-xs' value='+' onclick=add('"+head+"')></input>")
+		document.write("<input type=button id="+head+"_Add"+ " class ='btn btn-primary btn-xs' value='+' ></input>")
 		document.write("<input type=button id="+head+"_Delete"+ " class ='btn btn-danger btn-xs' value='x' onclick=removeBranch('"+head+"')></input>")
 
+		var break_element= document.createElement("BR");
+		var modal = document.getElementById("modal");
+		var modal_header = document.getElementById("modal-header")
+		var modal_body = document.getElementById("modal-body");
+		var add_button = document.getElementById(head+"_Add");
+		var span = document.getElementsByClassName("close")[0];
+		add_button.onclick = function(e){add(head)
+			}
+		window.onload =function(){
+			span.onclick = function(){
+				var modal_header = document.getElementById("modal-header");
+				var modal_body = document.getElementById("modal-body");
+				while(modal_header.lastChild.nodeName!="SPAN"){
+					modal_header.removeChild(modal_header.lastChild)
+				}
+				while(modal_body.hasChildNodes()){
+					modal_body.removeChild(modal_body.firstChild);
+				}
+				modal.style.display = "none";
+			};
+		}
+		window.onclick = function(event){
+			if(event.target == modal){
+				var modal_header = document.getElementById("modal-header");
+				var modal_body = document.getElementById("modal-body");
+				while(modal_header.lastChild.nodeName!="SPAN"){
+					modal_header.removeChild(modal_header.lastChild)
+				}
+				while(modal_body.hasChildNodes()){
+					modal_body.removeChild(modal_body.firstChild);
+				}
+				modal.style.display = "none";
+			}
+		};
 		//Create childrens
 		if (childrens.length>0){
 			document.write("<ul id = "+head+"_Children>");
@@ -64,70 +98,46 @@
 		var modal = document.getElementById("modal");
 		var modal_header = document.getElementById("modal-header")
 		var modal_body = document.getElementById("modal-body");
-		var add_button = document.getElementById(head+"_Add");
-		var span = document.getElementsByClassName("close")[0];
-		add_button.onclick = function(){
-			modal.style.display = "block";
-			modal_header.innerHTML = "Adding child to '"+ document.getElementById(head+"_Description").innerHTML +"'";
+		modal.style.display = "block";
+		modal_header.innerHTML += "Adding child to '"+ document.getElementById(head+"_Description").innerHTML +"'";
+
+		var child_id=gen_uuid();
+		var child = document.createElement("LI");
+		child.id = child_id;
+		var child_descript=document.createElement("INPUT");
+		child_descript.type="text";
+		child_descript.classList.add("text-info");
+		child_descript.id=child_id+"_Description";
+		child_descript.placeholder="Description";
+		var description_text = document.createElement("SPAN");
+		description_text.classList.add("text-info");
+		description_text.innerHTML="Description: ";
+		modal_body.appendChild(description_text);
+		modal_body.appendChild(child_descript);
+
+		modal_body.appendChild(document.createElement("P"));
+		var child_wait=document.createElement("INPUT");
+		child_wait.type="text";
+		child_wait.classList.add("text-info");
+		child_wait.id=child_id+"_Wait";
+		child_wait.placeholder="Wait";
+		child_wait.defaultValue = 0;
+		var wait_text = document.createElement("SPAN");
+		wait_text.classList.add("text-info");
+		wait_text.innerHTML="Wait: ";
+		modal_body.appendChild(wait_text);
+		modal_body.appendChild(child_wait);
 
 
-
-			var child_id=gen_uuid();
-			var child = document.createElement("LI");
-			child.id = child_id;
-			var child_descript=document.createElement("INPUT");
-			child_descript.type="text";
-			child_descript.classList.add("text-info");
-			child_descript.id=child_id+"_Description";
-			child_descript.placeholder="Description";
-			var description_text = document.createElement("SPAN");
-			description_text.classList.add("text-info");
-			description_text.innerHTML="Description: ";
-			modal_body.appendChild(description_text);
-			modal_body.appendChild(child_descript);
-
-			modal_body.appendChild(document.createElement("P"));
-			var child_wait=document.createElement("INPUT");
-			child_wait.type="text";
-			child_wait.classList.add("text-info");
-			child_wait.id=child_id+"_Wait";
-			child_wait.placeholder="Wait";
-			child_wait.defaultValue = 0;
-			var wait_text = document.createElement("SPAN");
-			wait_text.classList.add("text-info");
-			wait_text.innerHTML="Wait: ";
-			modal_body.appendChild(wait_text);
-			modal_body.appendChild(child_wait);
-
-
-			modal_body.appendChild(document.createElement("P"));
-			var submit_button = document.createElement("INPUT");
-			submit_button.value = "submit";
-			submit_button.type = "button";
-			submit_button.classList.add("text-info");
-			submit_button.id = child_id+"_Submit";
-			submit_button.onclick=function(){addNode(head,child_id)};
-			modal_body.appendChild(break_element);
-			modal_body.appendChild(submit_button);
-
-			// var have_children = document.getElementById(head+"_Children");
-			// if(!have_children){
-			// 	var child_list = document.createElement("UL");
-			// 	child_list.id = head+"_Children";
-			// 	document.getElementById(head).appendChild(child_list);
-			// 	have_children = document.getElementById(head+"_Children");
-			// }
-			// have_children.appendChild(child);
-
-			}
-		span.onclick = function(){
-			modal.style.display = "none";
-		}
-		window.onclick = function(event){
-			if(event.target == modal){
-				modal.style.display = "none";
-			}
-		}
+		modal_body.appendChild(document.createElement("P"));
+		var submit_button = document.createElement("INPUT");
+		submit_button.value = "submit";
+		submit_button.type = "button";
+		submit_button.classList.add("text-info");
+		submit_button.id = child_id+"_Submit";
+		submit_button.onclick=function(){addNode(head,child_id)};
+		modal_body.appendChild(break_element);
+		modal_body.appendChild(submit_button);
 	}
 
 	// Add's child to html
@@ -191,7 +201,9 @@
 
 		var modal_header = document.getElementById("modal-header");
 		var modal_body = document.getElementById("modal-body");
-		modal_header.removeChild(modal_header.firstChild);
+		while(modal_header.lastChild.nodeName!="SPAN"){
+			modal_header.removeChild(modal_header.lastChild)
+		}
 		while(modal_body.hasChildNodes()){
 			modal_body.removeChild(modal_body.firstChild);
 		}
@@ -318,16 +330,4 @@
 	create_Tree({{data|safe}});
 </script>
 <!-- The Modal -->
-<div id="modal" class="modal">
-
-  <!-- Modal content -->
-  <div class="modal-content">
-    <div class="list-group-item active" id="modal-header">
-      <span class="close">×</span>
-    </div>
-    <div class="list-group-item" id="modal-body">
-    </div>
-  </div>
-
-</div>
 {%endblock%}
