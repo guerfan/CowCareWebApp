@@ -57,75 +57,175 @@
 		}
 	}
 
-	// Function to add child
+	// Displays Modal to add child
 	//TODO: Clean up and add other buttons and change implementation
 	function add(head){
-		var child_id=gen_uuid();
-		var child = document.createElement("LI");
-		child.id = child_id+"_Temp_Field";
-		var child_field=document.createElement("INPUT");
-		child_field.type="text";
-		child_field.id=child_id+"_Description";
-		child_field.placeholder="Description";
-		child.appendChild(child_field);
+		var break_element= document.createElement("BR");
+		var modal = document.getElementById("modal");
+		var modal_header = document.getElementById("modal-header")
+		var modal_body = document.getElementById("modal-body");
+		var add_button = document.getElementById(head+"_Add");
+		var span = document.getElementsByClassName("close")[0];
+		add_button.onclick = function(){
+			modal.style.display = "block";
+			modal_header.innerHTML = "Adding child to '"+ document.getElementById(head+"_Description").innerHTML +"'";
 
-		var submit_form = document.createElement("FORM");
-		submit_form.action="";
-		submit_form.method="POST";
 
-		var submit_button = document.createElement("INPUT");
-		submit_button.value = "submit";
-		submit_button.type = "button";
-		submit_button.id = child_id+"_Submit";
-		submit_button.onclick=function(){addNode(head,child_id)};
-		child.appendChild(submit_button);
-		var have_children = document.getElementById(head+"_Children");
-		if(!have_children){
-			var child_list = document.createElement("UL");
-			child_list.id = head+"_Children";
-			document.getElementById(head).appendChild(child_list);
-			have_children = document.getElementById(head+"_Children");
+
+			var child_id=gen_uuid();
+			var child = document.createElement("LI");
+			child.id = child_id;
+			var child_descript=document.createElement("INPUT");
+			child_descript.type="text";
+			child_descript.classList.add("text-info");
+			child_descript.id=child_id+"_Description";
+			child_descript.placeholder="Description";
+			var description_text = document.createElement("SPAN");
+			description_text.classList.add("text-info");
+			description_text.innerHTML="Description: ";
+			modal_body.appendChild(description_text);
+			modal_body.appendChild(child_descript);
+
+			modal_body.appendChild(document.createElement("P"));
+			var child_wait=document.createElement("INPUT");
+			child_wait.type="text";
+			child_wait.classList.add("text-info");
+			child_wait.id=child_id+"_Wait";
+			child_wait.placeholder="Wait";
+			child_wait.defaultValue = 0;
+			var wait_text = document.createElement("SPAN");
+			wait_text.classList.add("text-info");
+			wait_text.innerHTML="Wait: ";
+			modal_body.appendChild(wait_text);
+			modal_body.appendChild(child_wait);
+
+
+			modal_body.appendChild(document.createElement("P"));
+			var submit_button = document.createElement("INPUT");
+			submit_button.value = "submit";
+			submit_button.type = "button";
+			submit_button.classList.add("text-info");
+			submit_button.id = child_id+"_Submit";
+			submit_button.onclick=function(){addNode(head,child_id)};
+			modal_body.appendChild(break_element);
+			modal_body.appendChild(submit_button);
+
+			// var have_children = document.getElementById(head+"_Children");
+			// if(!have_children){
+			// 	var child_list = document.createElement("UL");
+			// 	child_list.id = head+"_Children";
+			// 	document.getElementById(head).appendChild(child_list);
+			// 	have_children = document.getElementById(head+"_Children");
+			// }
+			// have_children.appendChild(child);
+
+			}
+		span.onclick = function(){
+			modal.style.display = "none";
 		}
-		have_children.appendChild(child);
+		window.onclick = function(event){
+			if(event.target == modal){
+				modal.style.display = "none";
+			}
+		}
 	}
 
 	// Add's child to html
 	function addNode(head,child_id){
-		descript_loc =document.getElementById(child_id+"_Description");
-		descript = descript_loc.value;
-		if(descript){
-			document.getElementById(head+"_Children").removeChild(document.getElementById(child_id+"_Temp_Field"));
-			var create_child = document.createElement("LI");
-			create_child.id = child_id;
-			var id_text = document.createTextNode(child_id);
-			var descript_text = document.creaateTextNode(descript);
-			create_child.appendChild(id_text);
-
-			var break_element = document.createElement("br");
-			create_child.appendChild(break_element);
-			create_child.appendChild(descript_text);
-			var break_element = document.createElement("br");
-			create_child.appendChild(break_element);
-
-			add_button = document.createElement("INPUT");
-			add_button.type = "button";
-			add_button.id = child_id+"_Add";
-			add_button.value = "Add";
-			add_button.class = resize_button;
-			add_button.onclick = function(){add(child_id)};
-			create_child.appendChild(add_button);
-			document.getElementById(head+"_Children").appendChild(create_child);
+		var head_children = document.getElementById(head+"_Children");
+		if(!head_children){
+			var child_list = document.createElement("UL");
+			child_list.id = head+"_Children";
+			document.getElementById(head).appendChild(child_list);
+			head_children = document.getElementById(head+"_Children");
 		}
+
+		var child_descript = document.getElementById(child_id+"_Description").value;
+		var child_wait = document.getElementById(child_id +"_Wait").value;
+		var child_icon = null;
+
+		var child = document.createElement("LI");
+		child.id = child_id;
+
+		// hide's child's id;
+		var id_element = document.createElement("P");
+		id_element.innerHTML = child_id;
+		id_element.classList.add("hidden");
+		child.appendChild(id_element);
+
+
+		var descript_element = document.createElement("P");
+		descript_element.id = child_id+"_Description";
+		descript_element.innerHTML = child_descript;
+		child.appendChild(descript_element);
+
+		var wait_element = document.createElement("P");
+		wait_element.id = child_id + "_Wait";
+		wait_element.innerHTML = child_wait;
+		wait_element.classList.add("hidden");
+		child.appendChild(wait_element);
+
+		var icon_element = document.createElement("P");
+		icon_element.id = child_id +"_Icon";
+		icon_element.innerHTML = child_icon;
+		icon_element.classList.add("hidden");
+		child.appendChild(icon_element);
+
+		var add_button = document.createElement("INPUT");
+		add_button.type = "button";
+		add_button.id = child_id+"_Add";
+		add_button.value = "+";
+		add_button.classList.add("btn","btn-primary","btn-xs");
+		add_button.onclick = function(){add(child_id)};
+		child.appendChild(add_button);
+
+		var delete_button = document.createElement("INPUT");
+		delete_button.type = "button";
+		delete_button.id = child_id+"_Delete";
+		delete_button.value = "x";
+		delete_button.classList.add("btn","btn-danger","btn-xs");
+		delete_button.onclick = function(){removeBranch(child_id)};
+		child.appendChild(delete_button);
+
+		head_children.appendChild(child);
+
+		var modal_header = document.getElementById("modal-header");
+		var modal_body = document.getElementById("modal-body");
+		modal_header.removeChild(modal_header.firstChild);
+		while(modal_body.hasChildNodes()){
+			modal_body.removeChild(modal_body.firstChild);
+		}
+		var modal = document.getElementById("modal");
+		modal.style.display = "none";
+
+		// descript_loc =document.getElementById(child_id+"_Description");
+		// descript = descript_loc.value;
+		// if(descript){
+		// 	document.getElementById(head+"_Children").removeChild(document.getElementById(child_id+"_Temp_Field"));
+		// 	var create_child = document.createElement("LI");
+		// 	create_child.id = child_id;
+		// 	var id_text = document.createTextNode(child_id);
+		// 	var descript_text = document.creaateTextNode(descript);
+		// 	create_child.appendChild(id_text);
+
+		// 	var break_element = document.createElement("br");
+		// 	create_child.appendChild(break_element);
+		// 	create_child.appendChild(descript_text);
+		// 	var break_element = document.createElement("br");
+		// 	create_child.appendChild(break_element);
+
+		// }
 	}
 
 	//Remove child (delete) and branch
+	//Need testing
 	function removeBranch(head){
 			var child_element = document.getElementById(head);
 			var element_to_remove = child_element.parentNode; // list of all children's (if not root)
 			if(element_to_remove.childNodes.length>1){
 				element_to_remove=child_element;
-				var confirmed = confirm("Are you sure you want to delete this entire branch?");
-				if(confirmed==false){
+				var delete_branch = confirm("Are you sure you want to delete this entire branch?");
+				if(delete_branch==false){
 					return;
 				}
 			}
@@ -134,10 +234,12 @@
 			if(parent_name=="LI" || parent_name =="UL"){
 				var parent_id = parent_node.id;
 				var parent_element = document.getElementById(parent_id);
-				console.log(parent_id);
 				parent_element.removeChild(element_to_remove);
 			}else{ //Clear tree besides head
-				confirm("Are you sure you want to clear the entire chart?");
+				var delete_head = confirm("Are you sure you want to clear the entire chart?");
+				if (delete_head==false){
+					return;
+				}
 				var child_id = child_element.id;
 				element_to_remove = document.getElementById(child_id+"_Children");
 				child_element.removeChild(element_to_remove);
@@ -215,10 +317,17 @@
 	}
 	create_Tree({{data|safe}});
 </script>
-<div id="add_child_modal" class="modal">
-	<div class="modal-content">
-		<span class="close">x</span>
-		<p>Some text in the Modal..</p>
-	</div>
+<!-- The Modal -->
+<div id="modal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="list-group-item active" id="modal-header">
+      <span class="close">×</span>
+    </div>
+    <div class="list-group-item" id="modal-body">
+    </div>
+  </div>
+
 </div>
 {%endblock%}
