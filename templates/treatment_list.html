@@ -1,5 +1,126 @@
 {% extends "login_base.html" %}
 {% block content %}
+<script type="text/javascript">
+	function delete_plan(treatment_id){
+		console.log("delete    " + treatment_id)
+	}
+
+	function add_plan(){
+		var break_element= document.createElement("BR");
+		var modal = document.getElementById("modal");
+		var modal_header = document.getElementById("modal-header")
+		var modal_body = document.getElementById("modal-body");
+		var span = document.getElementsByClassName("close")[0];
+		modal_header.innerHTML+= "Confirmation";
+		modal_header.classList.add("text-warning");
+
+		modal_body.innerHTML+="Name of treatment plan: ";
+		modal_body.classList.add("text-info");
+
+		var treatment_plan_name=document.createElement("INPUT");
+		treatment_plan_name.type="text";
+		treatment_plan_name.classList.add("text-info");
+		treatment_plan_name.id="Treatment_name";
+		treatment_plan_name.placeholder="Name";
+		modal_body.appendChild(treatment_plan_name);
+		modal_body.appendChild(break_element);
+
+		var confirm_button = document.createElement("INPUT");
+		confirm_button.type = "button";
+		confirm_button.onclick = function(){
+			var new_treatment ={};
+			console.log(document.getElementById('Treatment_name').value);
+			new_treatment['title']=document.getElementById('Treatment_name').value;
+			var new_treatment_body ={};
+			var uuid= gen_uuid();
+			new_treatment_body['head']=uuid;
+			new_treatment_body[uuid]={
+				'wait':'0',
+				'description':new_treatment['title'],
+				'icon': null,
+				'children':[]
+			}
+			new_treatment['body']=new_treatment_body
+			console.log(new_treatment);
+			var new_treatment_text = JSON.stringify(new_treatment);
+			console.log(new_treatment_text);
+			var treatment_title = document.getElementById("Treatment_name").value;
+			var send_req = new XMLHttpRequest();
+			send_req.open("POST","http://localhost:5000/treatment_plans", true);
+			send_req.setRequestHeader('Content-Type','application/json; charset=UTF-8');
+			send_req.send(new_treatment_text);
+			send_req.onloadend=function(){
+				if(send_req.status != 200){
+					alert("Please try again another time");
+				}else{
+					window.location.reload();
+				}
+			}
+			while(modal_header.lastChild.nodeName!="SPAN"){
+				modal_header.removeChild(modal_header.lastChild)
+			}
+			while(modal_body.hasChildNodes()){
+				modal_body.removeChild(modal_body.firstChild);
+			}
+			var modal = document.getElementById("modal");
+			modal.style.display = "none";
+			return;};
+		confirm_button.value = "Add";
+		confirm_button.classList.add("btn","btn-info");
+		modal_body.appendChild(confirm_button);
+
+		var cancel_button = document.createElement("INPUT");
+		cancel_button.type = "button";
+		cancel_button.onclick = function(){
+			while(modal_header.lastChild.nodeName!="SPAN"){
+				modal_header.removeChild(modal_header.lastChild)
+			}
+			while(modal_body.hasChildNodes()){
+				modal_body.removeChild(modal_body.firstChild);
+			}
+			var modal = document.getElementById("modal");
+			modal.style.display = "none";
+			return;};
+		cancel_button.value = "Cancel";
+		cancel_button.classList.add("btn","btn-info");
+		modal_body.appendChild(cancel_button);
+
+		modal.style.display="block";
+		window.onload =function(){
+			span.onclick = function(){
+				var modal_header = document.getElementById("modal-header");
+				var modal_body = document.getElementById("modal-body");
+				while(modal_header.lastChild.nodeName!="SPAN"){
+					modal_header.removeChild(modal_header.lastChild)
+				}
+				while(modal_body.hasChildNodes()){
+					modal_body.removeChild(modal_body.firstChild);
+				}
+				modal.style.display = "none";
+			};
+		}
+		window.onclick = function(event){
+			if(event.target == modal){
+				var modal_header = document.getElementById("modal-header");
+				var modal_body = document.getElementById("modal-body");
+				while(modal_header.lastChild.nodeName!="SPAN"){
+					modal_header.removeChild(modal_header.lastChild)
+				}
+				while(modal_body.hasChildNodes()){
+					modal_body.removeChild(modal_body.firstChild);
+				}
+				modal.style.display = "none";
+			}
+		};
+	}
+
+	function gen_uuid() {
+    	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    	    var r = Math.random()*16|0, v = c === 'x' ? r : (r&0x3|0x8);
+        	return v.toString(16);
+    	});
+	}
+</script>
 <div style="padding: 80px 0;" >
 <!-- Default panel contents -->
 	
@@ -8,13 +129,16 @@
 		Treatments 
 		</li>
 		{% for treatment in treatment %}
-			<a href='/treatment_plans/{{ treatment['attributes']['id'] }}' class="list-group-item">{{ treatment['attributes']['title'] }}</a>
+		<div class="list-group-item">
+			<a href='/treatment_plans/{{ treatment['attributes']['id'] }}'>{{ treatment['attributes']['title'] }}</a>
+			<input type=button id="{{ treatment['attributes']['id'] }}" class=" btn-xs button-glow button-rounded button-royal pull-right" onclick="delete_plan('{{ treatment['attributes']['id'] }}')" value="X"></input>
+		</div>
+
 		{% endfor %}
 
 	</div>
 	<div style="float: right;">
-	  <a href="/addtreatment" class="button button-glow button-rounded button-caution">Add</a>
-	  <a href="#" class="button button-glow button-rounded button-royal">Delete</a>
+	  <input type=button id="add_treatment_plan" class="button button-glow button-rounded button-caution" onclick="add_plan()" value="Add">
 	</div>
 </div>
 {% endblock %}

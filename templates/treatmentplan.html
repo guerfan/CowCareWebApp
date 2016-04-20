@@ -12,6 +12,8 @@
 		//Create tree
 		document.write('<div class="tree list-group-item" id="chart">');
 		document.write("<p id='treatment_id' class='hidden'>"+data['id']+"</p>");
+		document.write("<p id='default_value' class='hidden'>"+data['default']+"</p>");
+
 
 		// Head id
 		document.write("<ul id = 'root'><li id="+head+">");
@@ -28,9 +30,30 @@
 		save_button.classList.add("btn","btn-success");
 		document.write("</div>");
 		document.write('</div>');
+		document.write('<div id="default_loc">');
+		document.write('</div>');
 		document.write('<div id="save_loc">');
 		document.write('</div>');
 		document.getElementById("save_loc").appendChild(save_button);
+
+		var is_default = document.getElementById('default_value').innerHTML;
+		if (is_default!=true){
+			var default_button =document.createElement("INPUT");
+			default_button.type = "button";
+			default_button.onclick = function(){make_default()};
+			default_button.value = "Make Default";
+			default_button.id = "default_button"
+			default_button.classList.add("btn","btn-success");
+			document.getElementById("save_loc").appendChild(default_button);
+		}else{
+			document.getElementById("default_loc").style.display="none";
+		}
+	}
+
+	//Function to make default
+	function make_default(){
+		document.getElementById("default_value").innerHTML = true;
+		document.getElementById("default_button").style.display="none";
 	}
 
 	// Function to recrusively create tree from json file
@@ -111,6 +134,7 @@
 		child_descript.classList.add("text-info");
 		child_descript.id=child_id+"_Description";
 		child_descript.placeholder="Description";
+
 		var description_text = document.createElement("SPAN");
 		description_text.classList.add("text-info");
 		description_text.innerHTML="Description: ";
@@ -124,6 +148,7 @@
 		child_wait.id=child_id+"_Wait";
 		child_wait.placeholder="Wait";
 		child_wait.defaultValue = 0;
+
 		var wait_text = document.createElement("SPAN");
 		wait_text.classList.add("text-info");
 		wait_text.innerHTML="Wait: ";
@@ -227,7 +252,6 @@
 		}
 
 		if(grandparent_element.nodeName == "DIV"){
-			var break_element= document.createElement("BR");
 			var modal = document.getElementById("modal");
 			var modal_header = document.getElementById("modal-header")
 			var modal_body = document.getElementById("modal-body");
@@ -386,6 +410,7 @@
 		var head_id = document.getElementById("root").firstChild.id;
 		json['id']=document.getElementById("treatment_id").innerHTML;
 		json['title']= document.getElementById("title").innerHTML;
+		json['default']= document.getElementById("default_value").innerHTML;
 		json['body'] = translate_json(head_id);
 		console.log(json)
 		var treatment_plan_text =JSON.stringify(json)

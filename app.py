@@ -14,24 +14,15 @@ app.secret_key = 'my precious'
 base_url = 'http://localhost:10200/v1'
 # base_url = 'https://katys-care-api.herokuapp.com/v1'
 
-# add 200 padding
-# # login required decorator
-# def login_required(f):
-#     @wraps(f)
-#     def wrap(*args, **kwargs):
-#         if 'logged_in' in session:
-#             return f(*args, **kwargs)
-#         else:
-            
-#             return redirect(url_for('login'))
-#     return wrap
-
 
 # use decorators to link the function to a url
 @app.route('/')
 #@login_required
 def home():
-    return render_template('index.html')  # render a template name=session['id']
+	if 'token' in session:
+		return render_template('index.html')
+	else:
+		return redirect(url_for('login'))
 
 # route for handling the login page logic
 @app.route('/login', methods=['GET', 'POST'])
@@ -85,42 +76,57 @@ def logout():
     return redirect(url_for('login'))
 
 # route for handling displaying treatment plans list
-@app.route('/treatment_plans')
+@app.route('/treatment_plans', methods = ['GET','POST','DELETE'])
 def treatmentplanList():
     auth = {}
-    auth['Authorization'] = session['token']
-    treatment_plan_status = requests.get("{url}/treatment_plans".format(url=base_url),headers=auth)
-    json_treatment_list = json.loads(treatment_plan_status.text)['data']
+    if 'token' in session:
+        auth['Authorization'] = session['token']
+    	treatment_plan_status = requests.get("{url}/treatment_plans".format(url=base_url),headers=auth)
+    	if treatment_plan_status.status_code!= 200:
+    		return redirect(url_for('login'))
+    	json_treatment_list = json.loads(treatment_plan_status.text)['data']
+    	if request.method == "POST":
+    		new_treatment_attributes = request.get_json()
+    		data ={
+    			'data':{
+    				'type': 'treatment_plans',
+    				'attributes':new_treatment_attributes
+    			}
+    		}
+	    	new_treatment_added_status = requests.post("{url}/treatment_plans".format(url=base_url),headers=auth, json=data);
+	    	treatment_plan_status = requests.get("{url}/treatment_plans".format(url=base_url),headers=auth)
+    		if treatment_plan_status.status_code!= 200:
+    			return redirect(url_for('login'))
+    		json_treatment_list = json.loads(treatment_plan_status.text)['data']
+    		return render_template('treatment_list.html', treatment=json_treatment_list)
+		if request.method == "DELETE":
+			print "delete"
+    else:
+        return redirect(url_for('login'))
     return render_template('treatment_list.html', treatment=json_treatment_list)
 
 @app.route('/treatment_plans/<treatmentid>', methods = ['GET','POST'])
 def treatmentplan(treatmentid):
     auth = {}
-    auth['Authorization'] = session['token']
-    print auth
-    treatment_plan_status = requests.get("{url}/treatment_plans/{id}".format(url=base_url, id = treatmentid),headers =auth)
-    id_treatment_plan = json.loads(treatment_plan_status.text)['data']['attributes']
-    if request.method == "POST":
-        updated_attributes = request.get_json()
-        updated_plan ={
-            'data':{
-                'type':'treatment_plans',
-                'attributes':updated_attributes
-            }
-        }
-        updated_attributes = request.get_json()
-        update_plan_status = requests.patch("{url}/treatment_plans/{treatmentid}".format(url=base_url, treatmentid=treatmentid), headers=auth, json=updated_plan);
-        print update_plan_status.text
-        print update_plan_status.status_code
+    if 'token' in session:
+	    auth['Authorization'] = session['token']
+	    treatment_plan_status = requests.get("{url}/treatment_plans/{id}".format(url=base_url, id = treatmentid),headers =auth)
+	    if treatment_plan_status.status_code!=200:
+	    	return redirect(url_for('login'))
+	    id_treatment_plan = json.loads(treatment_plan_status.text)['data']['attributes']
+	    print json.dumps(json.loads(treatment_plan_status.text), indent=4);
+	    if request.method == "POST":
+	        updated_attributes = request.get_json()
+	        updated_plan ={
+	            'data':{
+	                'type':'treatment_plans',
+	                'attributes':updated_attributes
+	            }
+	        }
+	        print updated_plan
+	        update_plan_status = requests.patch("{url}/treatment_plans/{treatmentid}".format(url=base_url, treatmentid=treatmentid), headers=auth, json=updated_plan);
     return render_template('treatmentplan.html',data = json.dumps(id_treatment_plan))
 
-@app.route('/treatment_plans/<treatment_plan>')
-def save(treatment_plan):
-    auth
-    auth = {}
-    auth['Authorization'] = session['token']
-    print treatment_plan
-    return redirect(url_for(treatmentplan))
 # str(uuid.uuid4())
 
 # route for handling displaying list of cows
