@@ -93,21 +93,30 @@ def treatmentplanList():
     json_treatment_list = json.loads(treatment_plan_status.text)['data']
     return render_template('treatment_list.html', treatment=json_treatment_list)
 
-@app.route('/treatment_plans/<treatmentid>')
+@app.route('/treatment_plans/<treatmentid>', methods = ['GET','POST'])
 def treatmentplan(treatmentid):
     auth = {}
     auth['Authorization'] = session['token']
     treatment_plan_status = requests.get("{url}/treatment_plans/{id}".format(url=base_url, id = treatmentid),headers =auth)
     id_treatment_plan = json.loads(treatment_plan_status.text)['data']['attributes']
+    if request.method == "POST":
+        updated_attributes = request.get_json()
+        updated_plan ={
+            'data':{
+                'type':'treatment_plans',
+                'attributes':updated_attributes
+            }
+        }
+        updated_attributes = request.get_json()
+        update_plan_status = requests.patch("{url}/treatment_plans/{treatmentid}".format(url=base_url, treatmentid=treatmentid), headers=auth, json=updated_plan);
     return render_template('treatmentplan.html',data = json.dumps(id_treatment_plan))
 
-@app.route('/treatment_plans/save')
-def save():
+@app.route('/treatment_plans/<treatment_plan>')
+def save(treatment_plan):
     auth
     auth = {}
     auth['Authorization'] = session['token']
-    r.read();
-    print r
+    print treatment_plan
     return redirect(url_for(treatmentplan))
 # str(uuid.uuid4())
 

@@ -11,7 +11,7 @@
 
 		//Create tree
 		document.write('<div class="tree list-group-item" id="chart">');
-		document.write("<p id='treatment_id'>"+data['id']+"<p>");
+		document.write("<p id='treatment_id' class='hidden'>"+data['id']+"<p>");
 		document.write("<ul id = 'root'><li id="+head+"><p>");
 
 		//Grabbing children from head and creating tree
@@ -31,14 +31,14 @@
 	function children(data,head){
 		var childrens = data[head]['children'];
 		document.write("<p id='"+head+"_Description'>"+data[head]['description']+"</p>");
-		document.write("<p id='"+head+"_Wait'>"+data[head]['wait']+"</p>");
-		document.write("<p id='"+head+"_Icon'>"+data[head]['icon']+"</p>");
-		document.write("<input type=button id="+head+"_Add"+ " class ='btn btn-primary btn-sm' value='+' onclick=add('"+head+"')></input>")
-		document.write("<input type=button id="+head+"_Delete"+ " class ='btn btn-primary btn-sm' value='x' onclick=remove('"+head+"')></input>")
+		document.write("<p id='"+head+"_Wait' class='hidden'>"+data[head]['wait']+"</p>");
+		document.write("<p id='"+head+"_Icon' class='hidden'>"+data[head]['icon']+"</p>");
+		document.write("<input type=button id="+head+"_Add"+ " class ='btn btn-primary btn-xs' value='+' onclick=add('"+head+"')></input>")
+		document.write("<input type=button id="+head+"_Delete"+ " class ='btn btn-danger btn-xs' value='x' onclick=remove('"+head+"')></input>")
 		if (childrens.length>0){
 			document.write("<ul id = "+head+"_Children>");
 			for(var i =0;i<childrens.length;i++){
-				document.write("<li id = "+ childrens[i]+"><p>" + childrens[i]);
+				document.write("<li id = "+ childrens[i]+"><p class='hidden'>" + childrens[i]);
 					children(data, childrens[i]);
 				document.write("</p></li>")
 			}
@@ -97,6 +97,7 @@
 			add_button.type = "button";
 			add_button.id = child_id+"_Add";
 			add_button.value = "Add";
+			add_button.class = resize_button;
 			add_button.onclick = function(){add(child_id)};
 			create_child.appendChild(add_button);
 			document.getElementById(head+"_Children").appendChild(create_child);
@@ -108,17 +109,18 @@
 	}
 
 	function save(){
+		var id = document.getElementById("treatment_id").innerHTML;
 		var json = {};
 		var head_id = document.getElementById("root").firstChild.id;
 		json['id']=document.getElementById("treatment_id").innerHTML;
 		json['title']= document.getElementById("title").innerHTML;
 		json['body'] = translate_json(head_id);
 		console.log(json)
-		var y = JSON.stringify(json)
+		var treatment_plan_text =JSON.stringify(json)
 		var send_req = new XMLHttpRequest();
-		send_req.open("POST", "save", true);
+		send_req.open("POST","http://localhost:5000/treatment_plans/"+id, true);
 		send_req.setRequestHeader('Content-Type','application/json; charset=UTF-8');
-		send_req.send(y);
+		send_req.send(treatment_plan_text);
 		send_req.onloadend=function(){
 			console.log("success");
 			console.log(send_req)
@@ -173,4 +175,10 @@
 	}
 	create_Tree({{data|safe}});
 </script>
+<div id="add_child_modal" class="modal">
+	<div class="modal-content">
+		<span class="close">x</span>
+		<p>Some text in the Modal..</p>
+	</div>
+</div>
 {%endblock%}
