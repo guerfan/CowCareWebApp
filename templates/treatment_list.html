@@ -2,7 +2,93 @@
 {% block content %}
 <script type="text/javascript">
 	function delete_plan(treatment_id){
-		console.log("delete    " + treatment_id)
+		var break_element= document.createElement("BR");
+		var modal = document.getElementById("modal");
+		var modal_header = document.getElementById("modal-header")
+		var modal_body = document.getElementById("modal-body");
+		var span = document.getElementsByClassName("close")[0];
+		var title = document.getElementById(treatment_id).innerHTML;
+		modal_header.innerHTML+= "Confirmation";
+		modal_header.classList.add("text-warning");
+
+		modal_body.innerHTML+="Are you sure you want to delete the plan: " + title;
+		modal_body.classList.add("text-info");
+		modal_body.appendChild(break_element);
+
+		var confirm_button = document.createElement("INPUT");
+		confirm_button.type = "button";
+		confirm_button.onclick = function(){
+			var delete_treatment ={
+				'id':treatment_id
+			}
+			var delete_treatment_text = JSON.stringify(delete_treatment);
+			console.log(delete_treatment);
+			var send_req = new XMLHttpRequest();
+			send_req.open("DELETE","http://localhost:5000/treatment_plans", true);
+			send_req.setRequestHeader('Content-Type','application/json; charset=UTF-8');
+			send_req.send(delete_treatment_text);
+			send_req.onloadend=function(){
+				if(send_req.status != 200){
+					alert("Please try again another time");
+				}else{
+				}
+			}
+			while(modal_header.lastChild.nodeName!="SPAN"){
+				modal_header.removeChild(modal_header.lastChild)
+			}
+			while(modal_body.hasChildNodes()){
+				modal_body.removeChild(modal_body.firstChild);
+			}
+			var modal = document.getElementById("modal");
+			modal.style.display = "none";
+			return;};
+		confirm_button.value = "Yes";
+		confirm_button.classList.add("btn","btn-info");
+		modal_body.appendChild(confirm_button);
+
+		var cancel_button = document.createElement("INPUT");
+		cancel_button.type = "button";
+		cancel_button.onclick = function(){
+			while(modal_header.lastChild.nodeName!="SPAN"){
+				modal_header.removeChild(modal_header.lastChild)
+			}
+			while(modal_body.hasChildNodes()){
+				modal_body.removeChild(modal_body.firstChild);
+			}
+			var modal = document.getElementById("modal");
+			modal.style.display = "none";
+			return;};
+		cancel_button.value = "No";
+		cancel_button.classList.add("btn","btn-info");
+		modal_body.appendChild(cancel_button);
+
+		modal.style.display="block";
+		window.onload =function(){
+			span.onclick = function(){
+				var modal_header = document.getElementById("modal-header");
+				var modal_body = document.getElementById("modal-body");
+				while(modal_header.lastChild.nodeName!="SPAN"){
+					modal_header.removeChild(modal_header.lastChild)
+				}
+				while(modal_body.hasChildNodes()){
+					modal_body.removeChild(modal_body.firstChild);
+				}
+				modal.style.display = "none";
+			};
+		}
+		window.onclick = function(event){
+			if(event.target == modal){
+				var modal_header = document.getElementById("modal-header");
+				var modal_body = document.getElementById("modal-body");
+				while(modal_header.lastChild.nodeName!="SPAN"){
+					modal_header.removeChild(modal_header.lastChild)
+				}
+				while(modal_body.hasChildNodes()){
+					modal_body.removeChild(modal_body.firstChild);
+				}
+				modal.style.display = "none";
+			}
+		};
 	}
 
 	function add_plan(){
@@ -11,7 +97,7 @@
 		var modal_header = document.getElementById("modal-header")
 		var modal_body = document.getElementById("modal-body");
 		var span = document.getElementsByClassName("close")[0];
-		modal_header.innerHTML+= "Confirmation";
+		modal_header.innerHTML+= "Adding Treatment Plan";
 		modal_header.classList.add("text-warning");
 
 		modal_body.innerHTML+="Name of treatment plan: ";
@@ -130,7 +216,7 @@
 		</li>
 		{% for treatment in treatment %}
 		<div class="list-group-item">
-			<a href='/treatment_plans/{{ treatment['attributes']['id'] }}'>{{ treatment['attributes']['title'] }}</a>
+			<a href='/treatment_plans/{{ treatment['attributes']['id'] }}' id={{ treatment['attributes']['id'] }}>{{ treatment['attributes']['title'] }}</a>
 			<input type=button id="{{ treatment['attributes']['id'] }}" class=" btn-xs button-glow button-rounded button-royal pull-right" onclick="delete_plan('{{ treatment['attributes']['id'] }}')" value="X"></input>
 		</div>
 
