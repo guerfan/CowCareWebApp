@@ -11,8 +11,8 @@ app = Flask(__name__)
 
 # config
 app.secret_key = 'my precious'  
-base_url = 'http://localhost:10200/v1'
-# base_url = 'https://katys-care-api.herokuapp.com/v1'
+# base_url = 'http://localhost:10200/v1'
+base_url = 'https://katys-care-api.herokuapp.com/v1'
 
 
 # use decorators to link the function to a url
