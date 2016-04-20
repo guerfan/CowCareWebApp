@@ -99,10 +99,17 @@ def treatmentplanList():
     			return redirect(url_for('login'))
     		json_treatment_list = json.loads(treatment_plan_status.text)['data']
     		return render_template('treatment_list.html', treatment=json_treatment_list)
-		if request.method == "DELETE":
-			print "delete"
-			delete_json = request.get_json();
-			print delete_json
+        if request.method == "DELETE":
+            delete_json = request.get_json();
+            treatment_id = delete_json['id'];
+            data={
+            'data':{
+                    'type': 'treatment_plans',
+                    'attributes':delete_json
+                }
+            }
+            delete_json_status = requests.delete("{url}/treatment_plans/{id}".format(url=base_url, id=treatment_id),headers=auth, json =data)
+            print delete_json_status.text;
     else:
         return redirect(url_for('login'))
     return render_template('treatment_list.html', treatment=json_treatment_list)

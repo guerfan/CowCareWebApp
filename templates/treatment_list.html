@@ -22,7 +22,7 @@
 				'id':treatment_id
 			}
 			var delete_treatment_text = JSON.stringify(delete_treatment);
-			console.log(delete_treatment);
+			console.log(delete_treatment_text);
 			var send_req = new XMLHttpRequest();
 			send_req.open("DELETE","http://localhost:5000/treatment_plans", true);
 			send_req.setRequestHeader('Content-Type','application/json; charset=UTF-8');
@@ -31,6 +31,7 @@
 				if(send_req.status != 200){
 					alert("Please try again another time");
 				}else{
+					window.location.reload();
 				}
 			}
 			while(modal_header.lastChild.nodeName!="SPAN"){
