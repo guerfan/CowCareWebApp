@@ -147,8 +147,12 @@ def cowList():
     auth = {}
     if 'token' in session:
         auth['Authorization'] = session['token']
-        calves_list_status = requests.get("{url}/calves".format(url=base_url),headers = auth)
-        cows = json.loads(calves_list_status.text)['data']
+        calves_list_status = requests.get("{url}/users/{id}?include=vet_for.calves".format(url=base_url,id=session["id"]), headers=auth)
+        print calves_list_status.text
+        cows = json.loads(calves_list_status.text)["included"]
+        cows = [c for c in cows if c["attributes"]["active"] and c["attributes"]["type"]=="calves"]
+        #calves_list_status = requests.get("{url}/calves".format(url=base_url),headers = auth)
+        #cows = json.loads(calves_list_status.text)['data']
     else:
         return redirect(url_for('login'))
     return render_template('cows_list.html',cows = cows)
