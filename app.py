@@ -35,12 +35,13 @@ def login():
             data['password']=request.form['password']
             json_data = json.dumps(data)
             login_status = requests.post("{url}/token?include=user".format(url=base_url), json=data)
-            if login_status.status_code == 200:
+            if login_status.status_code in [200,201]:
                 token = json.loads(login_status.text)['data']['id']
                 session['token'] = token
                 session['id'] = data['email']
                 return redirect(url_for('home'))
             else:
+                print login_status.status_code
                 error = 'Invalid Credentials. Please try again.'
         elif request.form['action'] == 'Register':
                 return redirect(url_for('register'))
@@ -81,11 +82,9 @@ def treatmentplanList():
     auth = {}
     if 'token' in session:
         auth['Authorization'] = session['token']
-        #treatment_plan_status = requests.get("{url}/treatment_plans".format(url=base_url),headers=auth)
         treatment_plan_status = requests.get("{url}/users/{id}?include=treatment_plans".format(url=base_url, id=session['id']), headers=auth)
         if treatment_plan_status.status_code!= 200:
             return redirect(url_for('login'))
-        #json_treatment_list = json.loads(treatment_plan_status.text)['data']
         json_treatment_list = json.loads(treatment_plan_status.text).get('included',[])
         if request.method == "POST":
             new_treatment_attributes = request.get_json()
@@ -159,7 +158,7 @@ def farms_cows(farm_id):
     if 'token' in session:
         auth['Authorization'] = session['token']
         calves_list_status = requests.get("{url}/farms/{farm_id}?include=calves".format(url=base_url, farm_id=farm_id),headers = auth)
-        cows = json.loads(calves_list_status.text)['included']
+        cows = json.loads(calves_list_status.text).get('included',[])
 
     else:
         return redirect(url_for('login'))
@@ -175,7 +174,7 @@ def farmList():
     if 'token' in session:
         auth['Authorization'] = session['token']
         farm_list_status = requests.get("{url}/users/{id}?include=vet_for".format(url=base_url, id=session['id']), headers=auth)   
-        farms = json.loads(farm_list_status.text)['included']
+        farms = json.loads(farm_list_status.text).get('included', [])
     
         farm_cows = requests.get("{url}/calves".format(url=base_url),headers = auth)
     else:
@@ -210,10 +209,10 @@ def farmListAdd():
                     }
                 }
             }
-            farm_status = requests.post("{url}/farms".format(url=base_url), json = farm, headers = auth)
-            if farm_status == 201:
+            farm_status = requests.post("{url}/farms".format(url=base_url), json=farm, headers=auth)
+            if farm_status.status_code == 201:
                 error = 'You are registered, please sign in.'
-                return redirect(url_for('farms'))
+                return redirect(url_for('farmList'))
             else:
                 error = 'Farm is already existed. Please try again.'
     else:
@@ -227,7 +226,7 @@ def calvesListAdd():
         auth['Authorization'] = session['token']
         if request.method == "POST":
             farm_list_status = requests.get("{url}/users/{id}?include=vet_for".format(url=base_url, id=session['id']), headers=auth)   
-            farms = json.loads(farm_list_status.text)['included']
+            farms = json.loads(farm_list_status.text).get('included', [])
             farm_id = 0
             for farm in farms: 
                 if farm['attributes']['name'] == request.form['farmname']:
