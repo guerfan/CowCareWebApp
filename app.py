@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 # config
 app.secret_key = 'my precious'  
-#base_url = 'http://localhost:10200/v1'
+# base_url = 'http://localhost:10200/v1'
 base_url = 'https://katys-care-api.herokuapp.com/v1'
 
 
@@ -142,14 +142,12 @@ def cowList():
     auth = {}
     if 'token' in session:
         auth['Authorization'] = session['token']
-        a = requests.get("{url}/users/{id}?include=vet_for".format(url=base_url, id=session['id']), headers=auth)   
-
         calves_list_status = requests.get("{url}/calves".format(url=base_url),headers = auth)
-        calves = json.loads(calves_list_status.text)['included']
+        cows = json.loads(calves_list_status.text)['data']
     else:
         return redirect(url_for('login'))
-    return render_template('cows_list.html')
-    # return a.text
+    return render_template('cows_list.html',cows = cows)
+    # return calves_list_status.text
 
 @app.route('/<farm_id>')
 def farms_cows(farm_id):
