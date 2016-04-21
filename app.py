@@ -19,10 +19,10 @@ base_url = 'https://katys-care-api.herokuapp.com/v1'
 @app.route('/')
 #@login_required
 def home():
-	if 'token' in session:
-		return render_template('index.html')
-	else:
-		return redirect(url_for('login'))
+    if 'token' in session:
+        return render_template('index.html')
+    else:
+        return redirect(url_for('login'))
 
 # route for handling the login page logic
 @app.route('/login', methods=['GET', 'POST'])
@@ -81,28 +81,28 @@ def treatmentplanList():
     auth = {}
     if 'token' in session:
         auth['Authorization'] = session['token']
-    	#treatment_plan_status = requests.get("{url}/treatment_plans".format(url=base_url),headers=auth)
+        #treatment_plan_status = requests.get("{url}/treatment_plans".format(url=base_url),headers=auth)
         treatment_plan_status = requests.get("{url}/users/{id}?include=treatment_plans".format(url=base_url, id=session['id']), headers=auth)
-    	if treatment_plan_status.status_code!= 200:
-    		return redirect(url_for('login'))
-    	#json_treatment_list = json.loads(treatment_plan_status.text)['data']
+        if treatment_plan_status.status_code!= 200:
+            return redirect(url_for('login'))
+        #json_treatment_list = json.loads(treatment_plan_status.text)['data']
         json_treatment_list = json.loads(treatment_plan_status.text)['includes']
-    	if request.method == "POST":
-    		new_treatment_attributes = request.get_json()
-    		data ={
-    			'data':{
-    				'type': 'treatment_plans',
-    				'attributes':new_treatment_attributes
-    			}
-    		}
-	    	new_treatment_added_status = requests.post("{url}/treatment_plans".format(url=base_url),headers=auth, json=data);
-	    	#treatment_plan_status = requests.get("{url}/treatment_plans".format(url=base_url),headers=auth)
+        if request.method == "POST":
+            new_treatment_attributes = request.get_json()
+            data ={
+                'data':{
+                    'type': 'treatment_plans',
+                    'attributes':new_treatment_attributes
+                }
+            }
+            new_treatment_added_status = requests.post("{url}/treatment_plans".format(url=base_url),headers=auth, json=data)
+            #treatment_plan_status = requests.get("{url}/treatment_plans".format(url=base_url),headers=auth)
             treatment_plan_status = requests.get("{url}/users/{id}?include=treatment_plans".format(url=base_url, id=session['id']), headers=auth)
-    		if treatment_plan_status.status_code != 200:
-    			return redirect(url_for('login'))
-    		#json_treatment_list = json.loads(treatment_plan_status.text)['data']
+            if treatment_plan_status.status_code != 200:
+                return redirect(url_for('login'))
+            #json_treatment_list = json.loads(treatment_plan_status.text)['data']
             json_treatment_list = json.loads(treatment_plan_status.text)['includes']
-    		return render_template('treatment_list.html', treatment=json_treatment_list)
+            return render_template('treatment_list.html', treatment=json_treatment_list)
         if request.method == "DELETE":
             delete_json = request.get_json();
             treatment_id = delete_json['id'];
@@ -122,20 +122,20 @@ def treatmentplanList():
 def treatmentplan(treatmentid):
     auth = {}
     if 'token' in session:
-	    auth['Authorization'] = session['token']
-	    treatment_plan_status = requests.get("{url}/treatment_plans/{id}".format(url=base_url, id = treatmentid),headers =auth)
-	    if treatment_plan_status.status_code!=200:
-	    	return redirect(url_for('login'))
-	    id_treatment_plan = json.loads(treatment_plan_status.text)['data']['attributes']
-	    if request.method == "POST":
-	        updated_attributes = request.get_json()
-	        updated_plan ={
-	            'data':{
-	                'type':'treatment_plans',
-	                'attributes':updated_attributes
-	            }
-	        }
-	        update_plan_status = requests.patch("{url}/treatment_plans/{treatmentid}".format(url=base_url, treatmentid=treatmentid), headers=auth, json=updated_plan);
+        auth['Authorization'] = session['token']
+        treatment_plan_status = requests.get("{url}/treatment_plans/{id}".format(url=base_url, id = treatmentid),headers =auth)
+        if treatment_plan_status.status_code!=200:
+            return redirect(url_for('login'))
+        id_treatment_plan = json.loads(treatment_plan_status.text)['data']['attributes']
+        if request.method == "POST":
+            updated_attributes = request.get_json()
+            updated_plan ={
+                'data':{
+                    'type':'treatment_plans',
+                    'attributes':updated_attributes
+                }
+            }
+            update_plan_status = requests.patch("{url}/treatment_plans/{treatmentid}".format(url=base_url, treatmentid=treatmentid), headers=auth, json=updated_plan);
     return render_template('treatmentplan.html',data = json.dumps(id_treatment_plan))
 
 # str(uuid.uuid4())
