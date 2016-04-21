@@ -415,7 +415,8 @@
 		console.log(json)
 		var treatment_plan_text =JSON.stringify(json)
 		var send_req = new XMLHttpRequest();
-		send_req.open("POST","http://localhost:5000/treatment_plans/"+id, true);
+		//TODO: Change to fit link
+		send_req.open("POST",window.location.href, true);
 		send_req.setRequestHeader('Content-Type','application/json; charset=UTF-8');
 		send_req.send(treatment_plan_text);
 		send_req.onloadend=function(){
