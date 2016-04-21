@@ -81,10 +81,12 @@ def treatmentplanList():
     auth = {}
     if 'token' in session:
         auth['Authorization'] = session['token']
-    	treatment_plan_status = requests.get("{url}/treatment_plans".format(url=base_url),headers=auth)
+    	#treatment_plan_status = requests.get("{url}/treatment_plans".format(url=base_url),headers=auth)
+        treatment_plan_status = requests.get("{url}/users/{id}?include=treatment_plans".format(url=base_url, id=session['id']), headers=auth)
     	if treatment_plan_status.status_code!= 200:
     		return redirect(url_for('login'))
-    	json_treatment_list = json.loads(treatment_plan_status.text)['data']
+    	#json_treatment_list = json.loads(treatment_plan_status.text)['data']
+        json_treatment_list = json.loads(treatment_plan_status.text)['includes']
     	if request.method == "POST":
     		new_treatment_attributes = request.get_json()
     		data ={
@@ -94,10 +96,12 @@ def treatmentplanList():
     			}
     		}
 	    	new_treatment_added_status = requests.post("{url}/treatment_plans".format(url=base_url),headers=auth, json=data);
-	    	treatment_plan_status = requests.get("{url}/treatment_plans".format(url=base_url),headers=auth)
-    		if treatment_plan_status.status_code!= 200:
+	    	#treatment_plan_status = requests.get("{url}/treatment_plans".format(url=base_url),headers=auth)
+            treatment_plan_status = requests.get("{url}/users/{id}?include=treatment_plans".format(url=base_url, id=session['id']), headers=auth)
+    		if treatment_plan_status.status_code != 200:
     			return redirect(url_for('login'))
-    		json_treatment_list = json.loads(treatment_plan_status.text)['data']
+    		#json_treatment_list = json.loads(treatment_plan_status.text)['data']
+            json_treatment_list = json.loads(treatment_plan_status.text)['includes']
     		return render_template('treatment_list.html', treatment=json_treatment_list)
         if request.method == "DELETE":
             delete_json = request.get_json();
