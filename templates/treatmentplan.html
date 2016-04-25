@@ -30,13 +30,7 @@
 		save_button.classList.add("btn","btn-success");
 		document.write("</div>");
 		document.write('</div>');
-		document.getElementById("chart").appendChild(save_button);
-	}
-
-	//Function to make default
-	function make_default(){
-		document.getElementById("default_value").innerHTML = true;
-		document.getElementById("default_button").style.display="none";
+		document.getElementById("chart").parentNode.appendChild(save_button);
 	}
 
 	// Function to recrusively create tree from json file

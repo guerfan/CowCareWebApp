@@ -10,7 +10,7 @@ import uuid
 app = Flask(__name__)
 
 # config
-app.secret_key = 'my precious'  
+app.secret_key = '\xb9\xd8j\xf76\xeb|\x1d\x85\x94^z\xcc\xcc\x90\x98)\xd8\xecf;\x81\x9a\x1b'
 # base_url = 'http://localhost:10200/v1'
 base_url = 'https://katys-care-api.herokuapp.com/v1'
 
@@ -77,7 +77,7 @@ def logout():
     return redirect(url_for('login'))
 
 # route for handling displaying treatment plans list
-@app.route('/treatment_plans', methods = ['GET','POST','DELETE'])
+@app.route('/treatment_plans', methods = ['GET','POST','DELETE', 'PATCH'])
 def treatmentplanList():
     auth = {}
     if 'token' in session:
@@ -114,10 +114,36 @@ def treatmentplanList():
                 }
             }
             delete_json_status = requests.delete("{url}/treatment_plans/{id}".format(url=base_url, id=treatment_id),headers=auth, json =data)
-            print delete_json_status.text;
+        if request.method == "PATCH":
+            patch_json = request.get_json();
+            plan_id = patch_json['id']
+            print json_treatment_list[0]['attributes']['default']
+            for i in json_treatment_list:
+                if(i['attributes']['default']):
+                    change_plan_id = i['attributes']['id']
+                    patch_change_plan_json = {
+                        'data':{
+                            'type':'treatment_plans',
+                            'attributes': {
+                                'id': change_plan_id,
+                                'default': False
+                            }
+                        }
+                    }
+                    patch_status = requests.patch("{url}/treatment_plans/{treatmentid}".format(url=base_url, treatmentid=change_plan_id), headers=auth, json=patch_change_plan_json);
+            default_json_change={
+                'data':{
+                    'type':'treatment_plans',
+                    'attributes':{
+                        'id': plan_id,
+                        'default':True
+                    }
+                }
+            }
+            change_plan_default = requests.patch("{url}/treatment_plans/{treatmentid}".format(url=base_url, treatmentid=plan_id), headers=auth, json=default_json_change);
     else:
         return redirect(url_for('login'))
-    return render_template('treatment_list.html', treatment=json_treatment_list)
+    return render_template('treatment_list.html', treatments=json_treatment_list)
 
 @app.route('/treatment_plans/<treatmentid>', methods = ['GET','POST'])
 def treatmentplan(treatmentid):

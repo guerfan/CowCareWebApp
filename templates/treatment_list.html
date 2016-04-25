@@ -113,7 +113,6 @@
 			}
 			new_treatment['body']=new_treatment_body
 			var new_treatment_text = JSON.stringify(new_treatment);
-			var treatment_title = document.getElementById("Treatment_name").value;
 			var send_req = new XMLHttpRequest();
 			send_req.open("POST",window.location.href, true);
 			send_req.setRequestHeader('Content-Type','application/json; charset=UTF-8');
@@ -170,6 +169,25 @@
 		};
 	}
 
+	function change_default(id){
+		change_default_request = {};
+		change_default_request['id']=id;
+		change_default_request_text =JSON.stringify(change_default_request);
+		console.log(change_default_request)
+		var patch_req = new XMLHttpRequest();
+		patch_req.open("PATCH",window.location.href, true);
+		patch_req.setRequestHeader('Content-Type','application/json; charset=UTF-8');
+		patch_req.send(change_default_request_text);
+		patch_req.onloadend=function(){
+			console.log(patch_req.statusText)
+			if(patch_req.status != 200){
+				alert("Please try again another time");
+			}else{
+				window.location.reload()
+			}
+		}
+	}
+
 	function gen_uuid() {
     	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     	    var r = Math.random()*16|0, v = c === 'x' ? r : (r&0x3|0x8);
@@ -178,16 +196,25 @@
 	}
 </script>
 <div style="padding: 80px 0;" >
-<!-- Default panel contents -->
+<!-- Default panel contents -->`
 	
 	<div class="list-group">
 		<li href="#" class="list-group-item active"> 
 		Treatments 
 		</li>
-		{% for treatment in treatment %}
+		{% for treatment in treatments %}
 		<div class="list-group-item">
 			<a href='/treatment_plans/{{ treatment['attributes']['id'] }}' id={{ treatment['attributes']['id'] }}>{{ treatment['attributes']['title'] }}</a>
-			<input type=button id="{{ treatment['attributes']['id'] }}_Delete" class=" btn-xs button-glow button-rounded button-royal pull-right" onclick="delete_plan('{{ treatment['attributes']['id'] }}')" value="X"></input>
+			<input type=button id="{{ treatment['attributes']['id'] }}_Delete" 
+				class=" btn-xs button-glow button-rounded button-royal pull-right" 
+				onclick="delete_plan('{{ treatment['attributes']['id'] }}')" 
+				value="X"></input>
+
+			<input type=button id="{{ treatment['attributes']['id'] }}_Default" 
+				class=" btn-xs button-glow button-rounded pull-right{%if treatment['attributes']['default'] %} btn-success disabled {% else %} btn-default{% endif %}" 
+				{%if treatment['attributes']['default'] %} btn-success" disabled {% else %} btn-default"{% endif %} onclick="change_default('{{ treatment['attributes']['id'] }}')" 
+				value={%if treatment['attributes']['default'] %}"Default"{% else %}"Not Default"{% endif %}></input>
+
 		</div>
 
 		{% endfor %}
