@@ -7,7 +7,7 @@
 		var head = dataTree['head'];
 
 		//Format html to theme
-		document.write('<div class="list-group"><div class="list-group-item active" id="title">'+data['title']+'</div>')
+		document.write('<div class="list-group"><div class="list-group-item active" id="title">'+data['title']+'{%if data['default'] %}(Default) {% endif %}</div>')
 
 		//Create tree
 		document.write('<div class="tree list-group-item" id="chart">');
@@ -30,24 +30,7 @@
 		save_button.classList.add("btn","btn-success");
 		document.write("</div>");
 		document.write('</div>');
-		document.write('<div id="default_loc">');
-		document.write('</div>');
-		document.write('<div id="save_loc">');
-		document.write('</div>');
-		document.getElementById("save_loc").appendChild(save_button);
-
-		var is_default = document.getElementById('default_value').innerHTML;
-		if (is_default!=true){
-			var default_button =document.createElement("INPUT");
-			default_button.type = "button";
-			default_button.onclick = function(){make_default()};
-			default_button.value = "Make Default";
-			default_button.id = "default_button"
-			default_button.classList.add("btn","btn-success");
-			document.getElementById("save_loc").appendChild(default_button);
-		}else{
-			document.getElementById("default_loc").style.display="none";
-		}
+		document.getElementById("chart").appendChild(save_button);
 	}
 
 	//Function to make default
@@ -73,28 +56,14 @@
 		var modal_header = document.getElementById("modal-header")
 		var modal_body = document.getElementById("modal-body");
 		var add_button = document.getElementById(head+"_Add");
-		var span = document.getElementsByClassName("close")[0];
 		add_button.onclick = function(e){add(head)
 			}
-		window.onload =function(){
-			span.onclick = function(){
-				var modal_header = document.getElementById("modal-header");
-				var modal_body = document.getElementById("modal-body");
-				while(modal_header.lastChild.nodeName!="SPAN"){
-					modal_header.removeChild(modal_header.lastChild)
-				}
-				while(modal_body.hasChildNodes()){
-					modal_body.removeChild(modal_body.firstChild);
-				}
-				modal.style.display = "none";
-			};
-		}
 		window.onclick = function(event){
 			if(event.target == modal){
 				var modal_header = document.getElementById("modal-header");
 				var modal_body = document.getElementById("modal-body");
-				while(modal_header.lastChild.nodeName!="SPAN"){
-					modal_header.removeChild(modal_header.lastChild)
+				while(modal_header.hasChildNodes()){
+					modal_header.removeChild(modal_header.firstChild)
 				}
 				while(modal_body.hasChildNodes()){
 					modal_body.removeChild(modal_body.firstChild);
@@ -160,7 +129,7 @@
 		var submit_button = document.createElement("INPUT");
 		submit_button.value = "submit";
 		submit_button.type = "button";
-		submit_button.classList.add("text-info", "btn");
+		submit_button.classList.add("btn-info", "btn");
 		submit_button.id = child_id+"_Submit";
 		submit_button.onclick=function(){addNode(head,child_id)};
 		modal_body.appendChild(break_element);
@@ -228,8 +197,8 @@
 
 		var modal_header = document.getElementById("modal-header");
 		var modal_body = document.getElementById("modal-body");
-		while(modal_header.lastChild.nodeName!="SPAN"){
-			modal_header.removeChild(modal_header.lastChild)
+		while(modal_header.hasChildNodes()){
+			modal_header.removeChild(modal_header.firstChild)
 		}
 		while(modal_body.hasChildNodes()){
 			modal_body.removeChild(modal_body.firstChild);
@@ -255,7 +224,6 @@
 			var modal = document.getElementById("modal");
 			var modal_header = document.getElementById("modal-header")
 			var modal_body = document.getElementById("modal-body");
-			var span = document.getElementsByClassName("close")[0];
 			modal_header.innerHTML+= "Confirmation";
 			modal_header.classList.add("text-warning");
 
@@ -266,8 +234,8 @@
 			confirm_button.type = "button";
 			confirm_button.onclick = function(){
 				child_element.removeChild(child_element_children);
-				while(modal_header.lastChild.nodeName!="SPAN"){
-					modal_header.removeChild(modal_header.lastChild)
+				while(modal_header.hasChildNodes()){
+					modal_header.removeChild(modal_header.first())
 				}
 				while(modal_body.hasChildNodes()){
 					modal_body.removeChild(modal_body.firstChild);
@@ -282,8 +250,8 @@
 			var cancel_button = document.createElement("INPUT");
 			cancel_button.type = "button";
 			cancel_button.onclick = function(){
-				while(modal_header.lastChild.nodeName!="SPAN"){
-					modal_header.removeChild(modal_header.lastChild)
+				while(modal_header.hasChildNodes()){
+					modal_header.removeChild(modal_header.firstChild)
 				}
 				while(modal_body.hasChildNodes()){
 					modal_body.removeChild(modal_body.firstChild);
@@ -296,25 +264,12 @@
 			modal_body.appendChild(cancel_button);
 
 			modal.style.display="block";
-			window.onload =function(){
-				span.onclick = function(){
-					var modal_header = document.getElementById("modal-header");
-					var modal_body = document.getElementById("modal-body");
-					while(modal_header.lastChild.nodeName!="SPAN"){
-						modal_header.removeChild(modal_header.lastChild)
-					}
-					while(modal_body.hasChildNodes()){
-						modal_body.removeChild(modal_body.firstChild);
-					}
-					modal.style.display = "none";
-				};
-			}
 			window.onclick = function(event){
 				if(event.target == modal){
 					var modal_header = document.getElementById("modal-header");
 					var modal_body = document.getElementById("modal-body");
-					while(modal_header.lastChild.nodeName!="SPAN"){
-						modal_header.removeChild(modal_header.lastChild)
+					while(modal_header.hasChildNodes()){
+						modal_header.removeChild(modal_header.firstChild)
 					}
 					while(modal_body.hasChildNodes()){
 						modal_body.removeChild(modal_body.firstChild);
@@ -328,7 +283,6 @@
 				var modal = document.getElementById("modal");
 				var modal_header = document.getElementById("modal-header")
 				var modal_body = document.getElementById("modal-body");
-				var span = document.getElementsByClassName("close")[0];
 				modal_header.innerHTML+= "Confirmation";
 				modal_header.classList.add("text-warning");
 
@@ -339,8 +293,8 @@
 				confirm_button.type = "button";
 				confirm_button.onclick = function(){
 					parent_element.removeChild(child_element);
-					while(modal_header.lastChild.nodeName!="SPAN"){
-						modal_header.removeChild(modal_header.lastChild)
+					while(modal_header.hasChildNodes()){
+						modal_header.removeChild(modal_header.firstChild)
 					}
 					while(modal_body.hasChildNodes()){
 						modal_body.removeChild(modal_body.firstChild);
@@ -355,8 +309,8 @@
 				var cancel_button = document.createElement("INPUT");
 				cancel_button.type = "button";
 				cancel_button.onclick = function(){
-					while(modal_header.lastChild.nodeName!="SPAN"){
-						modal_header.removeChild(modal_header.lastChild)
+					while(modal_header.hasChildNodes()){
+						modal_header.removeChild(modal_header.firstChild)
 					}
 					while(modal_body.hasChildNodes()){
 						modal_body.removeChild(modal_body.firstChild);
@@ -369,25 +323,12 @@
 				modal_body.appendChild(cancel_button);
 
 				modal.style.display="block";
-				window.onload =function(){
-					span.onclick = function(){
-						var modal_header = document.getElementById("modal-header");
-						var modal_body = document.getElementById("modal-body");
-						while(modal_header.lastChild.nodeName!="SPAN"){
-							modal_header.removeChild(modal_header.lastChild)
-						}
-						while(modal_body.hasChildNodes()){
-							modal_body.removeChild(modal_body.firstChild);
-						}
-						modal.style.display = "none";
-					};
-				}
 				window.onclick = function(event){
 					if(event.target == modal){
 						var modal_header = document.getElementById("modal-header");
 						var modal_body = document.getElementById("modal-body");
-						while(modal_header.lastChild.nodeName!="SPAN"){
-							modal_header.removeChild(modal_header.lastChild)
+						while(modal_header.hasChildNodes()){
+							modal_header.removeChild(modal_header.firstChild)
 						}
 						while(modal_body.hasChildNodes()){
 							modal_body.removeChild(modal_body.firstChild);
@@ -425,30 +366,16 @@
 				var modal = document.getElementById("modal");
 				var modal_header = document.getElementById("modal-header")
 				var modal_body = document.getElementById("modal-body");
-				var span = document.getElementsByClassName("close")[0];
 				modal_header.innerHTML+= "Successfuly saved";
 				modal_body.classList.add("text-success");
 				modal_body.innerHTML ="The treatment plan has been successfully saved.";
 				modal.style.display="block";
-				window.onload =function(){
-					span.onclick = function(){
-						var modal_header = document.getElementById("modal-header");
-						var modal_body = document.getElementById("modal-body");
-						while(modal_header.lastChild.nodeName!="SPAN"){
-							modal_header.removeChild(modal_header.lastChild)
-						}
-						while(modal_body.hasChildNodes()){
-							modal_body.removeChild(modal_body.firstChild);
-						}
-						modal.style.display = "none";
-					};
-				}
 				window.onclick = function(event){
 					if(event.target == modal){
 						var modal_header = document.getElementById("modal-header");
 						var modal_body = document.getElementById("modal-body");
-						while(modal_header.lastChild.nodeName!="SPAN"){
-							modal_header.removeChild(modal_header.lastChild)
+						while(modal_header.hasChildNodes()){
+							modal_header.removeChild(modal_header.firstChild)
 						}
 						while(modal_body.hasChildNodes()){
 							modal_body.removeChild(modal_body.firstChild);
@@ -511,5 +438,4 @@
 
 	create_Tree({{data|safe}});
 </script>
-<!-- The Modal -->
 {%endblock%}
