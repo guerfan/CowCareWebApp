@@ -49,6 +49,7 @@
 
 		//Buttons
 		document.write("<input type=button id="+head+"_Add"+ " class ='btn btn-primary btn-xs' value='+' ></input>")
+		document.write("<input type=button id="+head+"_Edit"+ " class ='btn btn-info btn-xs' value='!' ></input>")
 		document.write("<input type=button id="+head+"_Delete"+ " class ='btn btn-danger btn-xs' value='x' onclick=removeBranch('"+head+"')></input>")
 
 		//Implements add using modal
@@ -56,8 +57,10 @@
 		var modal_header = document.getElementById("modal-header")
 		var modal_body = document.getElementById("modal-body");
 		var add_button = document.getElementById(head+"_Add");
+		var edit_button = document.getElementById(head+"_Edit");
 		add_button.onclick = function(e){add(head)
 			}
+		edit_button.onclick = function(e){edit(head)}
 		window.onclick = function(event){
 			if(event.target == modal){
 				var modal_header = document.getElementById("modal-header");
@@ -136,6 +139,75 @@
 		modal_body.appendChild(submit_button);
 	}
 
+	// Displays Modal to edit child
+	//TODO: Clean up and add other buttons and change implementation
+	function edit(child){
+		console.log(child);
+		var break_element= document.createElement("BR");
+		var modal = document.getElementById("modal");
+		var modal_header = document.getElementById("modal-header")
+		var modal_body = document.getElementById("modal-body");
+		modal.style.display = "block";
+		modal_header.innerHTML += "Editing child '"+ document.getElementById(child+"_Description").innerHTML +"'";
+
+		var temp_child = document.createElement("LI");
+		temp_child.id = child+"_Temp";
+		var child_descript=document.createElement("INPUT");
+		child_descript.type="text";
+		child_descript.classList.add("text-info");
+		child_descript.id=child+"_Description_New";
+		child_descript.placeholder="Description";
+		console.log(document.getElementById(child+"_Description"));
+		child_descript.defaultValue = document.getElementById(child+"_Description").innerHTML;
+
+		var description_text = document.createElement("SPAN");
+		description_text.classList.add("text-info");
+		description_text.innerHTML="Description: ";
+		modal_body.appendChild(description_text);
+		modal_body.appendChild(child_descript);
+
+		modal_body.appendChild(document.createElement("P"));
+		var child_wait=document.createElement("INPUT");
+		child_wait.type="text";
+		child_wait.classList.add("text-info");
+		child_wait.id=child+"_Wait_New";
+		child_wait.placeholder="Wait";
+		child_wait.defaultValue = document.getElementById(child+"_Wait").innerHTML;
+
+		var wait_text = document.createElement("SPAN");
+		wait_text.classList.add("text-info");
+		wait_text.innerHTML="Wait: ";
+		modal_body.appendChild(wait_text);
+		modal_body.appendChild(child_wait);
+
+
+		modal_body.appendChild(document.createElement("P"));
+		var submit_button = document.createElement("INPUT");
+		submit_button.value = "submit";
+		submit_button.type = "button";
+		submit_button.classList.add("btn-info", "btn");
+		submit_button.id = child+"_Submit";
+		submit_button.onclick=function(){
+			past_child_descript = document.getElementById(child+"_Description");
+			past_child_wait = document.getElementById(child+"_Wait");
+			past_child_descript.innerHTML=document.getElementById(child+"_Description_New").value;
+			past_child_wait = document.getElementById(child+"_Wait_New").value;
+			var modal_header = document.getElementById("modal-header");
+			var modal_body = document.getElementById("modal-body");
+			while(modal_header.hasChildNodes()){
+				modal_header.removeChild(modal_header.firstChild)
+			}
+			while(modal_body.hasChildNodes()){
+				modal_body.removeChild(modal_body.firstChild);
+			}
+			var modal = document.getElementById("modal");
+			modal.style.display = "none";
+
+		};
+		modal_body.appendChild(break_element);
+		modal_body.appendChild(submit_button);
+	}
+
 	// Add's child to html
 	function addNode(head,child_id){
 		var head_children = document.getElementById(head+"_Children");
@@ -184,6 +256,14 @@
 		add_button.classList.add("btn","btn-primary","btn-xs");
 		add_button.onclick = function(){add(child_id)};
 		child.appendChild(add_button);
+
+		var edit_button = document.createElement("INPUT");
+		edit_button.type = "button";
+		edit_button.id = child_id+"_Edit";
+		edit_button.value = "!";
+		edit_button.classList.add("btn","btn-info","btn-xs");
+		edit_button.onclick = function(){edit(child_id)};
+		child.appendChild(edit_button);
 
 		var delete_button = document.createElement("INPUT");
 		delete_button.type = "button";
