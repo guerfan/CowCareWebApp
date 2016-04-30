@@ -1,5 +1,3 @@
 # CowCareWebApp
-I pull all these files from a youtube flask tutor. It uses a fake user. We can edit the login page based on this. Run in terminal with "python app.py"
-The youtube video can be found https://www.youtube.com/watch?v=hNzruwVPtCE&index=4&list=PLLjmbh6XPGK4ISY747FUHXEl9lBxre4mM
-
-Css for family tree : http://thecodeplayer.com/walkthrough/css3-family-tree <-
+Katy's cow care web app made by Allen, Yifan, Max, Leah, and Zheng.
+Run python app.py to run the app.
